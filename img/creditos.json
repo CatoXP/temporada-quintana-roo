@@ -1,0 +1,376 @@
+{
+ "bacalar": {
+  "archivo": "bacalar.jpg",
+  "titulo": "Bacalar Lagoon, Quintana Roo, Mexico May 2021.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Bacalar_Lagoon,_Quintana_Roo,_Mexico_May_2021.jpg",
+  "licencia": "CC BY 2.0",
+  "autor": "Sharon Hahn Darlin",
+  "articulo": null
+ },
+ "mahahual": {
+  "archivo": "mahahual.jpg",
+  "titulo": "Mahahual",
+  "extracto": "Mahahual es un puerto y población del estado mexicano de Quintana Roo, en el municipio de Othón P. Blanco frente al mar Caribe. En los últimos años, se ha desarrollado como un importante centro turístico en crecimiento.",
+  "coordenadas": {
+   "lat": 18.725,
+   "lon": -87.70833333
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:Mahahual,_Quintana_Roo,_Mexico_-_panoramio_(3).jpg",
+  "licencia": "CC BY 3.0",
+  "autor": "Juan Ortega",
+  "articulo": "https://es.wikipedia.org/wiki/Mahahual"
+ },
+ "chetumal": {
+  "archivo": "chetumal.jpg",
+  "titulo": "Chetumal",
+  "extracto": "Chetumal es una ciudad mexicana, capital del estado de Quintana Roo y cabecera del municipio de Othón P. Blanco, ubicada en la península de Yucatán a orillas de la bahía de Chetumal. Fue fundada bajo el nombre de Payo Obispo y conocida así desde 1898 hasta 1937, año en que recibe su denominación actual.",
+  "coordenadas": {
+   "lat": 18.49388944,
+   "lon": -88.29789889
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:Chetumal_mex.jpg",
+  "licencia": "CC BY-SA 4.0",
+  "autor": "Yunemus",
+  "articulo": "https://es.wikipedia.org/wiki/Chetumal"
+ },
+ "cancun": {
+  "archivo": "cancun.jpg",
+  "titulo": "Cancún",
+  "extracto": "Cancún es una ciudad turística mexicana ubicada en la península de Yucatánen el estado de Quintana Roo, cabecera del municipio de Benito Juárez. Es la ciudad más poblada del estado, con 888 797 habitantes según el censo del Instituto Nacional de Estadística y Geografía en 2020. Considerada un destino turístico de talla mundial, con certificación de la Organización Mundial del Turismo, el proyecto de su desarrollo inició operaciones en 1974 como Centro Integralmente Planeado, pionero de Fonatur, antes conocido como Infratur.",
+  "coordenadas": {
+   "lat": 21.16141611,
+   "lon": -86.82481111
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:Cancun_Strand_Luftbild_(22143397586).jpg",
+  "licencia": "CC BY 2.0",
+  "autor": "dronepicr",
+  "articulo": "https://es.wikipedia.org/wiki/Canc%C3%BAn"
+ },
+ "tulum": {
+  "archivo": "tulum.jpg",
+  "titulo": "Tulum",
+  "extracto": "Tulum is the site of a pre-Columbian Mayan walled city which served as a major port for Coba, in the Mexican state of Quintana Roo. The ruins are situated on 12-meter-tall (39 ft) cliffs along the east coast of the Yucatán Peninsula on the Caribbean Sea. Tulum was one of the last cities built and inhabited by the Maya and achieved its greatest prominence between the 13th and 15th centuries. Maya continued to occupy Tulum for about 70 years after the Spanish began exploring Mexico, but the city was abandoned by the end of the 16th century. Tulum is one of the best-preserved coastal Maya sites, and today it is a popular site for tourists.",
+  "coordenadas": {
+   "lat": 20.21472222,
+   "lon": -87.42888889
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:Tulum_2.jpg",
+  "licencia": "CC BY-SA 3.0",
+  "autor": "Popo le Chien",
+  "articulo": "https://en.wikipedia.org/wiki/Tulum"
+ },
+ "playa": {
+  "archivo": "playa.jpg",
+  "titulo": "Playa del Carmen",
+  "extracto": "Playa del Carmen es una ciudad mexicana, cabecera del municipio homónimo, en Quintana Roo. Cuenta según datos del Censo de Población y Vivienda del Instituto Nacional de Estadística y Geografía (INEGI) del año 2020 con una población de 304 942 habitantes por lo que es la segunda ciudad más poblada de Quintana Roo, y es además la 57.ª ciudad más poblada de México.",
+  "coordenadas": {
+   "lat": 20.6281425,
+   "lon": -87.0755
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:PlayadelCarmen3.png",
+  "licencia": "CC BY 4.0",
+  "autor": "",
+  "articulo": "https://es.wikipedia.org/wiki/Playa_del_Carmen"
+ },
+ "chacchoben": {
+  "archivo": "chacchoben.jpg",
+  "titulo": "Chacchobén",
+  "extracto": "Chacchobén es un yacimiento arqueológico maya ubicado cerca del homónimo poblado de Chacchobén, a 70 km de la ciudad mexicana de Chetumal. Al no haber evidencias epigrafia acerca del nombre original del sitio, se utiliza el del Ejido donde se ubica, el cual hace alusión al \"maíz colorado\". El sitio corresponde al asentamiento de mayor tamaño hasta la fecha reportado en el área conocida como Región de los Lagos.",
+  "coordenadas": {
+   "lat": 19.01666667,
+   "lon": -88.16666667
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:Chacchoben.JPG",
+  "licencia": "Public domain",
+  "autor": "-Luyten-",
+  "articulo": "https://es.wikipedia.org/wiki/Chacchob%C3%A9n"
+ },
+ "kohunlich": {
+  "archivo": "kohunlich.jpg",
+  "titulo": "Kohunlich",
+  "extracto": "Kohunlich es una antigua ciudad y centro ceremonial maya, ubicado en el municipio de Othón P. Blanco en las selvas de Quintana Roo, México dentro de la región maya de Río Bec.Constituyó un gran asentamiento prehispánico maya dividido en varios grupos y complejos arquitectónicos de carácter ceremonial y habitacional los cuales están integrados por numerosas plazas, templos y pirámides, su edificación se remonta al año 500 a. C. en el periodo Preclásico y continuó hasta el Posclásico temprano en el año 1100 d. C., aunque su época de apogeo se dio durante el periodo Clásico. En el sitio destaca el llamado Templo de los Mascarones, considerado el más representativo de Kohunlich el cual esta datado en el periodo clásico y consta de un gran edificio piramidal decorado con 6 grandes mascarones de estuco originalmente cubiertos de pintura roja fijados en las fachadas de los costados de manera escalonada, estos aluden a los rostros de los gobernantes de Kohunlich finamente ataviados con orejeras y tocados, los cuales son representados con una fuerte vinculación al dios maya solar, Kinich Ahau. Kohunlich desarrolló un estilo arquitectónico propio denominado estilo Pixa’an, nombre dado en referencia al conjunto arqueológico donde se observa esta manifestación arquitectónica única en la zona maya.",
+  "coordenadas": {
+   "lat": 18.41666667,
+   "lon": -88.78333333
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:Zona_arqueol%C3%B3gica_de_Kohunlich,_Quintana_Roo.jpg",
+  "licencia": "CC BY-SA 4.0",
+  "autor": "Muñoz LC",
+  "articulo": "https://es.wikipedia.org/wiki/Kohunlich"
+ },
+ "isla_mujeres": {
+  "archivo": "isla_mujeres.jpg",
+  "titulo": "Isla Mujeres",
+  "extracto": "Isla Mujeres es una ciudad que se encuentra en la isla del mismo nombre, ubicada en el mar Caribe, muy cerca de la península de Yucatán, al sureste de México. La isla constituye parte de uno de los once municipios del Estado de Quintana Roo, el municipio de Isla Mujeres y se ubica a trece kilómetros de la ciudad de Cancún, el principal polo turístico de la región. Fue fundada bajo el nombre de Dolores.",
+  "coordenadas": {
+   "lat": 21.23333333,
+   "lon": -86.73333333
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:Isla_Mujeres_aerial_(29729604048).jpg",
+  "licencia": "CC BY 2.0",
+  "autor": "dronepicr",
+  "articulo": "https://es.wikipedia.org/wiki/Isla_Mujeres"
+ },
+ "coba": {
+  "archivo": "coba.jpg",
+  "titulo": "Cobá",
+  "extracto": "Cobá es un yacimiento arqueológico de la cultura maya precolombina, localizado en el sureste de México, en el territorio que hoy es el estado de Quintana Roo, unos noventa kilómetros al este de Chichén Itzá y unos cuarenta al noroeste de Tulum.",
+  "coordenadas": {
+   "lat": 20.4898,
+   "lon": -87.7251
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:Coba_El_Castillo.JPG",
+  "licencia": "CC BY-SA 3.0",
+  "autor": "Elelicht",
+  "articulo": "https://es.wikipedia.org/wiki/Cob%C3%A1"
+ },
+ "sian_kaan": {
+  "archivo": "sian_kaan.jpg",
+  "titulo": "Sian Kaʼan Biosphere Reserve",
+  "extracto": "Sian Kaʼan Biosphere Reserve is a biosphere reserve in Tulum Municipality in the Mexican state of Quintana Roo. It was established in 1986 and became a UNESCO World Heritage Site in 1987.",
+  "coordenadas": {
+   "lat": 19.5,
+   "lon": -87.75
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:Bi%C3%B3sfera_de_Sian_Kaan_Quintana_Roo.JPG",
+  "licencia": "CC BY-SA 3.0",
+  "autor": "Martha xucunostli",
+  "articulo": "https://en.wikipedia.org/wiki/Sian_Ka%CA%BCan_Biosphere_Reserve"
+ },
+ "fuerte_bacalar": {
+  "archivo": "fuerte_bacalar.jpg",
+  "titulo": "Fuerte de San Felipe de Bacalar",
+  "extracto": "El Fuerte de San Felipe de Bacalar o Castillo de San Felipe de Bacalar fue un presidio novohispano del siglo XVIII situado en Bacalar, estado de Quintana Roo, en México.",
+  "coordenadas": {
+   "lat": 18.67694,
+   "lon": -88.39528
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:Fuerte_de_San_Felipe,_Bacalar._-_panoramio_(3).jpg",
+  "licencia": "CC BY 3.0",
+  "autor": "holachetumal",
+  "articulo": "https://es.wikipedia.org/wiki/Fuerte_de_San_Felipe_de_Bacalar"
+ },
+ "chinchorro": {
+  "archivo": "chinchorro.jpg",
+  "titulo": "Banco Chinchorro",
+  "extracto": "El banco Chinchorro es una barrera de arrecifes de coral que forma parte de la reserva de arrecifes de México, la segunda más grande del mundo. Se encuentra en el estado de Quintana Roo, en el municipio de Othón P. Blanco, y es parte de los atractivos naturales del mar Caribe, particularmente de los que se encuentran en la península de Yucatán, y del gran sistema de arrecifes mesoamericano, o reserva de arrecifes de Belice. Asimismo, el banco Chinchorro es el mayor atolón de México, y el segundo más grande del planeta. Declarado Área Natural Protegida (ANP), el 19 de julio de 1996, por decreto de la comisión de áreas naturales protegidas (CONANP) y declarado sitio Ramsarel 02-02-2004.",
+  "coordenadas": {
+   "lat": 18.58333333,
+   "lon": -87.36666667
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:Life_on_the_water_(6980036286).jpg",
+  "licencia": "CC BY-SA 2.0",
+  "autor": "Šarūnas Burdulis from USA",
+  "articulo": "https://es.wikipedia.org/wiki/Banco_Chinchorro"
+ },
+ "dzibanche": {
+  "archivo": "dzibanche.jpg",
+  "titulo": "Dzibanché",
+  "extracto": "Dzibanché, a veces escrito Tz'ibanche, originalmente llamado Kaanu'l, es un extenso sitio arqueológico y antigua ciudad maya localizada al sur del estado de Quintana Roo en México, la cual destaca como un gran asentamiento de dimensiones monumentales y cuna de la poderosa dinastía maya Kaanu'l (serpiente) que llegó a dominar de manera hegemónica un amplio territorio de las tierras bajas mayas centrales durante gran parte del periodo Clásico mesoamericano.",
+  "coordenadas": {
+   "lat": 18.6375,
+   "lon": -88.75902778
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:Dzibanche_estructura_2.jpg",
+  "licencia": "CC BY-SA 4.0",
+  "autor": "Dlegloire",
+  "articulo": "https://es.wikipedia.org/wiki/Dzibanch%C3%A9"
+ },
+ "museo_maya": {
+  "archivo": "museo_maya.jpg",
+  "titulo": "Museo de la Cultura Maya",
+  "extracto": "El Museo de la Cultura Maya (MCM) Ubicado en el estado Mexicano de Quintana Roo, es uno de los recintos museográficos más importantes de la civilización maya en México. Este museo plasma la forma de vida, cotidianidad y grandeza arquitectónica de la cultura Maya, así como su sistema calendárico y cosmovisión. Representaciones artísticas, escenografía e iluminación son la base de la exhibición.",
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Chetumal-2.JPG",
+  "licencia": "Public domain",
+  "autor": "",
+  "articulo": "https://es.wikipedia.org/wiki/Museo_de_la_Cultura_Maya"
+ },
+ "puerto_morelos": {
+  "archivo": "puerto_morelos.jpg",
+  "titulo": "Puerto Morelos",
+  "extracto": "Puerto Morelos es el principal puerto del estado mexicano de Quintana Roo y cabecera del municipio homónimo. Se encuentra al norte del estado, 33 km al sur de Cancún.",
+  "coordenadas": {
+   "lat": 20.85361111,
+   "lon": -86.87527778
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:PoMo_from_the_sea_-_panoramio.jpg",
+  "licencia": "CC BY 3.0",
+  "autor": "Alfonzo Buscemi",
+  "articulo": "https://es.wikipedia.org/wiki/Puerto_Morelos"
+ },
+ "akumal": {
+  "archivo": "akumal.jpg",
+  "titulo": "Akumal",
+  "extracto": "Akumal históricamente es el primer destino turístico de la franja costera de la península de Yucatán bañada por el Mar Caribe. Porción marina de baja profundidad en la cual se encuentra una agregación permanente de diversas especies en peces, tortugas marinas, así como la mayor abundancia de pastos marinos y algunos parches de coral.",
+  "coordenadas": {
+   "lat": 20.40093528,
+   "lon": -87.32243611
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:Akumal_Scuba_Diving_(4317784232).jpg",
+  "licencia": "CC BY 2.0",
+  "autor": "Serge Melki from Indianapolis, USA",
+  "articulo": "https://es.wikipedia.org/wiki/Akumal"
+ },
+ "cozumel": {
+  "archivo": "cozumel.jpg",
+  "titulo": "Municipio de Cozumel",
+  "extracto": "El municipio de Cozumel es uno de los once municipios que conforman al estado de Quintana Roo, México. Su cabecera es la localidad de San Miguel de Cozumel. Está integrado por la isla de Cozumel y los asentamientos continentales de Calica y Xel-Há.",
+  "coordenadas": {
+   "lat": 20.43,
+   "lon": -87.02
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:Isla_Cozumel,_M%C3%A9xico_-_panoramio.jpg",
+  "licencia": "CC BY-SA 3.0",
+  "autor": "Gabriel Alfaro Ortíz",
+  "articulo": "https://es.wikipedia.org/wiki/Municipio_de_Cozumel"
+ },
+ "xelha": {
+  "archivo": "xelha.jpg",
+  "titulo": "Xelha",
+  "extracto": "Xelha is an archaeological site of the Maya civilization from pre-Columbian Mesoamerica, located on the eastern coastline of the Yucatán Peninsula, in the present-day state of Quintana Roo, Mexico. The etymology of the site's name comes from Yukatek Maya, combining the roots xel (\"spring\") and ha' (\"water\").",
+  "coordenadas": {
+   "lat": 20.31972222,
+   "lon": -87.36694444
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:Ruinas_Xel_Ha.jpg",
+  "licencia": "CC BY-SA 3.0",
+  "autor": "Gabriela Lozano",
+  "articulo": "https://en.wikipedia.org/wiki/Xelha"
+ },
+ "musa": {
+  "archivo": "musa.jpg",
+  "titulo": "Cancún Underwater Museum",
+  "extracto": "The Cancún Underwater Museum is a non-profit organization based in Cancún, Mexico devoted to the art of conservation. The museum has a total of 500 sculptures, by a series of international and local sculptors, with three different galleries submerged between three and six meters deep in the ocean at the Cancún National Marine Park. The museum was thought up by Marine Park Director Jaime González Cano, with the objective of saving the nearby coral reefs by providing an alternative destination for divers. It was started in 2009 and officially opened in November 2010.",
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:DSCN0626_(14108251890).jpg",
+  "licencia": "CC BY 2.0",
+  "autor": "allenran 917 from Tampa, USA",
+  "articulo": "https://en.wikipedia.org/wiki/Canc%C3%BAn_Underwater_Museum"
+ },
+ "dos_ojos": {
+  "archivo": "dos_ojos.jpg",
+  "titulo": "Sistema Dos Ojos",
+  "extracto": "Dos Ojos is part of a flooded cave system located north of Tulum, on the Caribbean coast of the Yucatán Peninsula, in the state of Quintana Roo, Mexico. The exploration of Dos Ojos began in 1987 and still continues. The surveyed extent of the cave system is 82 kilometers (51 mi) and there are 28 known sinkhole entrances, which are locally called cenotes. In January 2018, a connection was found between Sistema Dos Ojos and Sistema Sac Actun. The smaller Dos Ojos became a part of Sac Actun, making the Sistema Sac Actun the longest known underwater cave system in the world.",
+  "coordenadas": {
+   "lat": 20.32472222,
+   "lon": -87.39194444
+  },
+  "fuente": "https://commons.wikimedia.org/wiki/File:Entrance_to_Dos_Ojos.JPG",
+  "licencia": "CC BY-SA 3.0",
+  "autor": "Dag Lindgren",
+  "articulo": "https://en.wikipedia.org/wiki/Sistema_Dos_Ojos"
+ },
+ "estromatolitos": {
+  "archivo": "estromatolitos.jpg",
+  "titulo": "Stromatolite laguna bacalar.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Stromatolite_laguna_bacalar.jpg",
+  "licencia": "CC BY-SA 4.0",
+  "autor": "Jiinjung",
+  "articulo": null
+ },
+ "bacalar_manana": {
+  "archivo": "bacalar_manana.jpg",
+  "titulo": "Good morning. Bacalar, Quintana Roo, Mexico.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Good_morning._Bacalar,_Quintana_Roo,_Mexico.jpg",
+  "licencia": "CC BY 2.0",
+  "autor": "Sharon Hahn Darlin",
+  "articulo": null
+ },
+ "bacalar_orilla": {
+  "archivo": "bacalar_orilla.jpg",
+  "titulo": "Bacalar Lagoon, Bacalar Quintana Roo, Mexico - It’s so shallow I’m sitting down here.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Bacalar_Lagoon,_Bacalar_Quintana_Roo,_Mexico_-_It%E2%80%99s_so_shallow_I%E2%80%99m_sitting_down_here.jpg",
+  "licencia": "CC BY 2.0",
+  "autor": "Sharon Hahn Darlin",
+  "articulo": null
+ },
+ "canal_piratas": {
+  "archivo": "canal_piratas.jpg",
+  "titulo": "Boats at the Pirates Channel - Laguna de Bacalar.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Boats_at_the_Pirates_Channel_-_Laguna_de_Bacalar.jpg",
+  "licencia": "CC BY-SA 2.0",
+  "autor": "Bernard DUPONT",
+  "articulo": null
+ },
+ "cenote_azul": {
+  "archivo": "cenote_azul.jpg",
+  "titulo": "Cenote Azul, Bacalar, Q. Roo, México. - panoramio.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Cenote_Azul,_Bacalar,_Q._Roo,_M%C3%A9xico._-_panoramio.jpg",
+  "licencia": "CC BY 3.0",
+  "autor": "holachetumal",
+  "articulo": null
+ },
+ "el_rey": {
+  "archivo": "el_rey.jpg",
+  "titulo": "El Rey archaeological site.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:El_Rey_archaeological_site.jpg",
+  "licencia": "CC BY-SA 4.0",
+  "autor": "In Vitrio",
+  "articulo": null
+ },
+ "mahahual_barcas": {
+  "archivo": "mahahual_barcas.jpg",
+  "titulo": "Boats Mahahual Quintana Roo 2023.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Boats_Mahahual_Quintana_Roo_2023.jpg",
+  "licencia": "CC BY 4.0",
+  "autor": "Larry D. Moore",
+  "articulo": null
+ },
+ "palapas": {
+  "archivo": "palapas.jpg",
+  "titulo": "Parque de las Palapas 1.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Parque_de_las_Palapas_1.jpg",
+  "licencia": "CC BY 2.0",
+  "autor": "City Foodsters",
+  "articulo": null
+ },
+ "museo_maya_cancun": {
+  "archivo": "museo_maya_cancun.jpg",
+  "titulo": "Museo Maya de Cancún - 41.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Museo_Maya_de_Canc%C3%BAn_-_41.jpg",
+  "licencia": "CC BY-SA 4.0",
+  "autor": "Oleg Yunakov",
+  "articulo": null
+ },
+ "quinta_avenida": {
+  "archivo": "quinta_avenida.jpg",
+  "titulo": "Walking on Quinta Avenida, Playa del Carmen, QR, Mexico.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Walking_on_Quinta_Avenida,_Playa_del_Carmen,_QR,_Mexico.jpg",
+  "licencia": "CC BY 2.0",
+  "autor": "Dennis Sylvester Hurd",
+  "articulo": null
+ },
+ "mahahual_malecon": {
+  "archivo": "mahahual_malecon.jpg",
+  "titulo": "Walking the Malecon (http-www.bluekaymahahual.com) - panoramio.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Walking_the_Malecon_(http-www.bluekaymahahual.com)_-_panoramio.jpg",
+  "licencia": "CC BY 3.0",
+  "autor": "Juan Ortega",
+  "articulo": null
+ }
+}
