@@ -760,6 +760,12 @@ i.se-va svg { fill: none; stroke: var(--tinta-3); stroke-width: 1.4; stroke-dash
   --cal: #0c1a1f; --cal-2: #16272d; --blanco: #11232a; --tinta: #eef3f1; --tinta-2: #bccaca; --tinta-3: #8fa3a5;
   --linea: rgba(238, 243, 241, .14); --laguna-hondo: #8be3d8;
 }
+/* Las secciones que ya eran oscuras (y el día ideal, que pinta su propio cielo) conservan los
+   colores del modo día; si no, heredan el texto oscuro/claro invertido y se pierde. */
+[data-tema="noche"] :is(.marquesina, .alternativa, .cuando, .dia-ideal, .lugares, .moverse, .nosotros, .pie) {
+  --cal: #f3f5f1; --cal-2: #e6ece7; --blanco: #ffffff; --tinta: #08191e; --tinta-2: #2f4448; --tinta-3: #5f7275;
+  --linea: rgba(8, 25, 30, .12); --laguna-hondo: #0b5a68;
+}
 [data-tema="noche"] body { background: #0c1a1f; }
 [data-tema="noche"] .barra.solida { background: rgba(12, 26, 31, .82); }
 [data-tema="noche"] .idioma { background: rgba(255, 255, 255, .06); }
