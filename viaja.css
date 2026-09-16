@@ -547,3 +547,55 @@ ol, ul { padding: 0; list-style: none; }
 .ola-mes { color: rgba(191, 252, 255, .55); }
 .ola-mes.elegido { color: #ff8a70; text-shadow: 0 0 12px rgba(255, 106, 77, .8); }
 .ola-destino { text-shadow: 0 0 18px rgba(139, 227, 216, .5); }
+
+/* ============================================= cómo moverte: viaje animado */
+.moverse { padding: 0 var(--gutter); }
+.moverse-fijo { min-height: 100svh; display: grid; align-content: center; gap: clamp(16px, 2.4vw, 28px); padding-block: clamp(80px, 8vw, 100px) 30px; max-width: var(--ancho); margin: 0 auto; }
+.moverse .cab { margin: 0; }
+.moverse .titulo-seccion { font-size: clamp(38px, 5vw, 80px); }
+.viaje { position: relative; border-radius: 32px; overflow: hidden; aspect-ratio: 1200 / 390; max-width: 100%; box-shadow: 0 50px 100px -50px rgba(0, 0, 0, .8); }
+.viaje svg { display: block; width: 100%; height: 100%; }
+.viaje-letrero { position: absolute; z-index: 2; left: 24px; top: 20px; padding: 10px 18px; border-radius: 999px; background: rgba(255, 255, 255, .9); color: var(--tinta); font: 750 clamp(16px, 1.6vw, 22px)/1.1 var(--display); letter-spacing: -.02em; box-shadow: 0 10px 30px -12px rgba(0, 0, 0, .4); }
+.viaje-letrero.entra { animation: letrero .6s var(--ease); }
+@keyframes letrero { from { transform: translateY(-14px) scale(.9); opacity: 0; } }
+.viaje .nube { animation: nube var(--d, 60s) linear infinite; transform: translate(0, var(--y, 0)); }
+@keyframes nube { to { transform: translate(1300px, var(--y, 0)); } }
+.viaje .rueda { transform-box: fill-box; transform-origin: center; animation: girar .6s linear infinite; }
+@keyframes girar { to { transform: rotate(360deg); } }
+.viaje .humo circle { animation: humo 1.4s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.viaje .humo circle + circle { animation-delay: .5s; }
+@keyframes humo { from { transform: translate(0, 0) scale(.6); opacity: .9; } to { transform: translate(-40px, -24px) scale(1.6); opacity: 0; } }
+.viaje .estela { stroke-dasharray: 60 30; animation: estela .5s linear infinite; }
+@keyframes estela { to { stroke-dashoffset: 90; } }
+.viaje .pin { transform: translate(var(--x), var(--y)); }
+.viaje .pin circle { fill: #e5472d; stroke: #fff; stroke-width: 3; }
+.viaje .pin text { font: 750 15px var(--display); fill: #fff; paint-order: stroke; stroke: rgba(6, 40, 48, .7); stroke-width: 4px; }
+#v-bienvenida { font: 760 44px var(--display); letter-spacing: -1px; fill: #fff; }
+.viaje .olas-mapa path { animation: olaMapa 3s ease-in-out infinite alternate; }
+@keyframes olaMapa { to { transform: translateX(14px); } }
+.moverse .ruta { margin-top: 0; }
+.moverse .ruta::before { top: 22px; }
+.moverse .parada-icono { width: 46px; height: 46px; border-radius: 15px; box-shadow: 0 0 0 6px var(--abismo); transition: transform .5s var(--ease), background .4s; }
+.moverse .parada-icono svg { width: 22px; height: 22px; }
+.moverse .parada h3 { font-size: 19px; }
+.moverse .parada p { font-size: 14px; line-height: 1.45; }
+.moverse .parada { gap: 8px; opacity: .45; transition: opacity .5s; }
+.moverse .parada.activa { opacity: 1; }
+.moverse .parada.activa .parada-icono { background: #ffb347; transform: scale(1.12); }
+@media (max-width: 900px) {
+  .viaje { aspect-ratio: 1 / 1; }
+  .viaje svg { height: 100%; }
+  .moverse .ruta { display: none; }
+  #v-bienvenida { font-size: 54px; }
+}
+
+/* ola v4: mar de día */
+.cuando .ola-3d { background: linear-gradient(180deg, #7fcfdc 0%, #bfe6e8 38%, #eaf4ef 58%, #d6efe9 100%); box-shadow: 0 60px 120px -60px rgba(0, 0, 0, .8); }
+.cuando .ola-mes { color: rgba(6, 40, 48, .7); font-weight: 750; }
+.cuando .ola-mes b { color: var(--laguna-hondo); }
+.cuando .ola-mes.hover { color: var(--tinta); transform-origin: center; }
+.cuando .ola-mes.elegido { color: #e5472d; text-shadow: none; }
+.cuando .ola-destino { color: var(--tinta); text-shadow: none; padding: 6px 12px; border-radius: 999px; background: rgba(255, 255, 255, .85); font-size: clamp(13px, 1.1vw, 16px); }
+.cuando .ola-destino.atenuado { opacity: .55; }
+
+.barra-vuelos { white-space: nowrap; }

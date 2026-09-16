@@ -200,6 +200,47 @@
     });
   }
 
+  function animarViaje() {
+    const letrero = $("#viaje-letrero"), bienvenida = $("#v-bienvenida");
+    const paradas = () => $$(".parada");
+    const fases = [["mov_bus", [2, 3]], ["mov_tren", [1]], ["mov_avion", [0]], ["mov_bienvenida", [0, 1, 2, 3, 4]]];
+    let fase = -1;
+    const ponerFase = (f) => {
+      if (f === fase) return;
+      fase = f;
+      letrero.textContent = t(fases[f][0]);
+      letrero.classList.remove("entra"); void letrero.offsetWidth; letrero.classList.add("entra");
+      paradas().forEach((el, i) => el.classList.toggle("activa", fases[f][1].includes(i)));
+    };
+    estado.faseViaje = () => { const f = fase; fase = -1; ponerFase(Math.max(0, f)); bienvenida.textContent = t("mov_bienvenida"); };
+    bienvenida.textContent = t("mov_bienvenida");
+    const ruta = $("#v-ruta"), largo = ruta.getTotalLength();
+    ruta.style.strokeDasharray = `${largo}`;
+    if (!hayGsap || reducido) {
+      $("#v-qroo").setAttribute("opacity", 1);
+      $$("#v-bus, #v-tren, #v-avion").forEach((el) => el.setAttribute("opacity", 0));
+      ruta.style.strokeDashoffset = 0;
+      ponerFase(3);
+      return;
+    }
+    ruta.style.strokeDashoffset = largo;
+    const tl = gsap.timeline({ defaults: { ease: "none" }, onUpdate: () => {
+      const p = tl.progress();
+      ponerFase(p < 0.27 ? 0 : p < 0.5 ? 1 : p < 0.7 ? 2 : 3);
+    } });
+    tl.fromTo("#v-bus", { x: -340 }, { x: 1300, duration: 1 }, 0)
+      .fromTo("#v-tren", { x: -900 }, { x: 1300, duration: 1 }, 0.8)
+      .fromTo("#v-avion", { x: -300, y: 340, rotation: -4, transformOrigin: "50% 50%" }, { x: 1320, y: 150, rotation: -10, duration: 1.1 }, 1.7)
+      .to("#v-paisaje", { opacity: 0, duration: 0.5 }, 2.75)
+      .fromTo("#v-qroo", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 2.75)
+      .fromTo("#v-mapa", { scale: 0.45, transformOrigin: "50% 50%", rotation: -8 }, { scale: 0.84, rotation: 0, duration: 0.7, ease: "back.out(1.4)" }, 2.8)
+      .to(ruta, { strokeDashoffset: 0, duration: 0.7 }, 3.2)
+      .fromTo(".pin", { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.3, stagger: 0.08, ease: "back.out(3)" }, 3.2)
+      .fromTo("#v-bienvenida", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4 }, 3.5)
+      .to({}, { duration: 0.3 });
+    ScrollTrigger.create({ trigger: ".moverse", start: "top top", end: () => "+=" + window.innerHeight * 2.4, pin: true, scrub: 0.6, animation: tl, anticipatePin: 1 });
+  }
+
   function animarMosaico() {
     if (!hayGsap || reducido) return;
     $$(".tesela img").forEach((img, i) => {
@@ -207,7 +248,6 @@
     });
     gsap.from(".tesela", { y: 70, opacity: 0, duration: 1.1, stagger: 0.06, ease: "expo.out", scrollTrigger: { trigger: "#mosaico", start: "top 85%", once: true } });
     gsap.from(".plato", { y: 60, opacity: 0, rotate: (i) => (i % 2 ? 2 : -2), duration: 1, stagger: 0.08, ease: "expo.out", scrollTrigger: { trigger: "#platos", start: "top 85%", once: true } });
-    gsap.from(".parada", { x: -40, opacity: 0, duration: 0.9, stagger: 0.1, ease: "expo.out", scrollTrigger: { trigger: "#ruta", start: "top 85%", once: true } });
   }
 
   // ------------------------------------------------------------------ buscador
@@ -388,6 +428,7 @@
     estado.interpretada = { fecha: estado.fecha, precision: "dia", en_rango: true, entrada: inp.value };
     ponerPista(capital(fechaLarga(estado.fecha)), "ok");
     if (estado.asistente) estado.asistente.idiomaCambiado();
+    if (estado.faseViaje) estado.faseViaje();
     if (hayGsap) ScrollTrigger.refresh();
   });
   $("#faq-bot").addEventListener("click", () => estado.asistente && estado.asistente.preguntar(C.bot[idioma].sugerencias[1]));
@@ -559,10 +600,10 @@
 
     elegirDestino(p.destino.id);
     try { history.replaceState(null, "", `?destino=${p.destino.id}&fecha=${p.fecha}${idioma !== "es" ? "&lang=" + idioma : ""}${location.hash}`); } catch (e) { /* vista embebida */ }
-    if (hayGsap) requestAnimationFrame(() => { ScrollTrigger.refresh(); animarMosaicoUnaVez(); });
+    if (hayGsap) requestAnimationFrame(() => { animarMosaicoUnaVez(); ScrollTrigger.refresh(); });
   }
   let mosaicoAnimado = false;
-  function animarMosaicoUnaVez() { if (!mosaicoAnimado) { mosaicoAnimado = true; animarMosaico(); } }
+  function animarMosaicoUnaVez() { if (!mosaicoAnimado) { mosaicoAnimado = true; animarMosaico(); animarViaje(); } }
 
   let turno = 0;
   async function planear(destino, fecha, desplazar) {
