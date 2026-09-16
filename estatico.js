@@ -157,6 +157,7 @@
     const u = new URL(url, location.href), q = u.searchParams, ruta = u.pathname;
     if (ruta.endsWith("/api/viaja/destinos")) return { horizonte: D.horizonte, destinos: D.destinos, calendario: D.calendario, validacion: [] };
     if (ruta.endsWith("/api/viaja/fechas")) return D.fechas;
+    if (ruta.endsWith("/api/viaja/descubre")) return D.descubre;
     if (ruta.endsWith("/api/viaja/interpretar")) {
       const r = interpretar(q.get("texto"));
       if (!r) throw new Error("No entendimos esa fecha. Prueba con «15 de enero», «marzo» o «Semana Santa».");

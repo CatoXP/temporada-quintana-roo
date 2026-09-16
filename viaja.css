@@ -596,7 +596,7 @@ ol, ul { padding: 0; list-style: none; }
 
 /* zonas, reseñas y hoteles */
 .zonas { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 4px; }
-.zonas button { border: 1px solid var(--linea); background: #fff; border-radius: 999px; padding: 9px 16px; font: 700 14px/1 var(--texto); cursor: pointer; transition: background .3s, color .3s; }
+.zonas button { border: 1px solid var(--linea); background: var(--blanco); border-radius: 999px; padding: 9px 16px; font: 700 14px/1 var(--texto); cursor: pointer; transition: background .3s, color .3s; }
 .zonas button.activa { background: var(--tinta); color: var(--cal); border-color: var(--tinta); }
 .restaurantes li { position: relative; }
 .rest-nombre { font: 700 20px/1.2 var(--display); letter-spacing: -.02em; }
@@ -606,7 +606,7 @@ ol, ul { padding: 0; list-style: none; }
 .dormir { padding: clamp(90px, 11vw, 150px) var(--gutter); background: var(--cal); }
 .dormir .zonas { max-width: var(--ancho); margin: 28px auto 0; }
 .hoteles { max-width: var(--ancho); margin: 22px auto 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 14px; }
-.hotel { display: grid; gap: 8px; align-content: start; padding: 22px; border-radius: 24px; background: #fff; border: 1px solid var(--linea); transition: transform .4s var(--ease), box-shadow .4s; }
+.hotel { display: grid; gap: 8px; align-content: start; padding: 22px; border-radius: 24px; background: var(--blanco); border: 1px solid var(--linea); transition: transform .4s var(--ease), box-shadow .4s; }
 .hotel:hover { transform: translateY(-4px); box-shadow: 0 30px 60px -40px rgba(6, 40, 48, .5); }
 .hotel-tipo { justify-self: start; padding: 5px 10px; border-radius: 999px; background: var(--cal-2); font: 700 12px/1 var(--texto); letter-spacing: .06em; text-transform: uppercase; color: var(--laguna-hondo); }
 .hotel h3 { font: 740 22px/1.1 var(--display); letter-spacing: -.02em; }
@@ -630,3 +630,174 @@ ol, ul { padding: 0; list-style: none; }
   .fondo-destino::after { background: linear-gradient(180deg, rgba(243, 245, 241, .82) 0%, rgba(243, 245, 241, .7) 60%, rgba(243, 245, 241, .3) 100%); }
 }
 @media (prefers-reduced-motion: reduce) { .toma { transform: none; } }
+
+/* ============================================================== v5 */
+.inferido { font-size: 13.5px; line-height: 1.45; font-weight: 600; color: var(--tinta-3); max-width: 52ch; }
+.inferido::before { content: "ⓘ "; }
+.cal-arriba .inferido { display: inline; font-size: 12.5px; }
+.cal-arriba .inferido::before { content: ""; }
+
+/* ---- botón de tema (sol ↔ luna) */
+.tema { position: relative; width: 44px; height: 44px; flex: none; border-radius: 50%; border: 1px solid var(--linea); background: rgba(255, 255, 255, .55);
+        backdrop-filter: blur(10px); cursor: pointer; display: grid; place-items: center; color: inherit; transition: background .4s, transform .4s var(--ease); }
+.tema:hover { transform: rotate(-12deg) scale(1.05); }
+.tema-icono { position: relative; width: 22px; height: 22px; }
+.tema-sol { position: absolute; inset: 5px; border-radius: 50%; background: #f2a541; box-shadow: 0 0 10px rgba(242, 165, 65, .8); transition: transform .6s var(--ease), background .6s, box-shadow .6s; }
+.tema-rayos { position: absolute; inset: 0; border-radius: 50%; transition: transform .6s var(--ease), opacity .4s;
+  background: conic-gradient(from 0deg, #f2a541 0 6deg, transparent 6deg 45deg, #f2a541 45deg 51deg, transparent 51deg 90deg, #f2a541 90deg 96deg, transparent 96deg 135deg, #f2a541 135deg 141deg, transparent 141deg 180deg, #f2a541 180deg 186deg, transparent 186deg 225deg, #f2a541 225deg 231deg, transparent 231deg 270deg, #f2a541 270deg 276deg, transparent 276deg 315deg, #f2a541 315deg 321deg, transparent 321deg);
+  -webkit-mask: radial-gradient(circle, transparent 7px, #000 7.5px); mask: radial-gradient(circle, transparent 7px, #000 7.5px); animation: girar-rayos 12s linear infinite; }
+@keyframes girar-rayos { to { transform: rotate(360deg); } }
+.tema-luna { position: absolute; width: 14px; height: 14px; border-radius: 50%; top: 1px; right: -2px; background: rgba(255, 255, 255, .55);
+  transform: translate(10px, -10px) scale(0); transition: transform .6s var(--ease), background .4s; }
+[data-tema="noche"] .tema { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .18); }
+[data-tema="noche"] .tema-sol { transform: scale(1.5); background: #f4f1de; box-shadow: 0 0 12px rgba(244, 241, 222, .6); }
+[data-tema="noche"] .tema-rayos { transform: scale(.4) rotate(90deg); opacity: 0; }
+[data-tema="noche"] .tema-luna { transform: translate(0, 0) scale(1); background: #0b1a20; }
+.barra.solida .tema-luna { background: rgba(243, 245, 241, .9); }
+[data-tema="noche"] .barra .tema-luna { background: #0d1c22; }
+@media (prefers-reduced-motion: reduce) { .tema-rayos { animation: none; } }
+
+/* ---- rueda del año */
+.rueda-caja { max-width: var(--ancho); margin: clamp(24px, 4vw, 48px) auto 0; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: clamp(24px, 4vw, 60px); align-items: center; }
+@media (max-width: 900px) { .rueda-caja { grid-template-columns: 1fr; } }
+.rueda { width: 100%; max-width: 680px; height: auto; margin: 0 auto; display: block; overflow: visible; }
+.rueda-fondo { fill: rgba(139, 227, 216, .05); stroke: rgba(139, 227, 216, .14); }
+.gajo { cursor: pointer; transition: opacity .35s, transform .35s var(--ease), filter .35s; transform-origin: 360px 360px; stroke: #05242b; stroke-width: 1.5; }
+.gajo.atenuado { opacity: .5; }
+.gajo.hover { transform: scale(1.035); filter: brightness(1.15); opacity: 1; }
+.gajo.elegido { stroke: #fff; stroke-width: 3; opacity: 1; }
+.rueda-mes { font: 750 15px var(--display); fill: rgba(191, 252, 255, .75); cursor: pointer; text-transform: capitalize; }
+.rueda-mes.hover, .rueda-mes.elegido { fill: #fff; }
+.rueda-anillo { font: 700 12px var(--texto); fill: rgba(243, 245, 241, .75); letter-spacing: .06em; text-transform: uppercase; }
+.rueda-centro-fondo { fill: #05242b; stroke: rgba(139, 227, 216, .25); }
+.rueda-centro-mes { font: 760 30px var(--display); fill: #fff; letter-spacing: -.02em; }
+.rueda-centro-sub { font: 600 14px var(--texto); fill: rgba(191, 252, 255, .8); }
+.rueda-lado { display: grid; gap: 20px; }
+.rueda-leyenda { display: grid; gap: 10px; }
+.rueda-leyenda div { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 18px; border-radius: 18px; background: rgba(255, 255, 255, .06); border: 1px solid var(--linea-osc); }
+.rueda-leyenda b { font: 750 18px var(--display); }
+.rueda-leyenda span { font-weight: 700; color: var(--c); }
+.rueda-leyenda .olitas i { background: rgba(243, 245, 241, .16); }
+.rueda-leyenda .olitas i.on { background: var(--c); }
+.cuando .inferido { color: rgba(243, 245, 241, .7); }
+
+/* ---- descubrimos */
+.descubre { padding: clamp(90px, 11vw, 150px) var(--gutter); background: var(--cal); }
+.hallazgos { max-width: var(--ancho); margin: clamp(36px, 5vw, 60px) auto 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 900px) { .hallazgos { grid-template-columns: 1fr; } }
+.hallazgo { display: grid; gap: 10px; align-content: start; padding: clamp(22px, 3vw, 34px); border-radius: 30px; background: var(--blanco); border: 1px solid var(--linea); }
+.hallazgo h3 { font: 750 clamp(24px, 2.2vw, 32px)/1.05 var(--display); letter-spacing: -.03em; }
+.hallazgo > p { color: var(--tinta-2); }
+.fila-personas { display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--linea); }
+.fila-personas b { font: 700 16px var(--display); }
+.fila-personas div { display: flex; flex-wrap: wrap; gap: 4px; }
+.fila-personas i, .personas-ley i { display: inline-block; width: 26px; height: 26px; }
+.fila-personas svg, .personas-ley svg { width: 100%; height: 100%; }
+i.duerme svg { fill: var(--laguna-hondo); }
+i.se-va svg { fill: none; stroke: var(--tinta-3); stroke-width: 1.4; stroke-dasharray: 2 2; }
+.personas-ley { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; margin-top: 8px; font-size: 14px; font-weight: 600; color: var(--tinta-2); }
+.personas-ley i { width: 18px; height: 18px; }
+@media (max-width: 520px) { .fila-personas { grid-template-columns: 1fr; } .fila-personas i { width: 22px; height: 22px; } }
+.monedas { display: flex; align-items: flex-end; justify-content: space-around; gap: 12px; min-height: 260px; padding-top: 12px; }
+.pila { display: grid; justify-items: center; gap: 10px; }
+.pila b { font: 700 15px var(--display); text-align: center; }
+.pila-monedas { display: flex; flex-direction: column-reverse; align-items: center; }
+.pila-monedas i { width: 64px; height: 16px; margin-top: -4px; border-radius: 50%; background: radial-gradient(ellipse at 50% 35%, #ffe08a, #f2a541 60%, #c07c16); box-shadow: 0 2px 0 #a8680f; }
+.flujos { width: 100%; max-width: 420px; height: auto; margin: 0 auto; display: block; }
+.flujo-tierra { fill: #bfe9df; stroke: #fff; stroke-width: 2; }
+.flujo-ruta { fill: none; stroke: rgba(229, 71, 45, .35); stroke-linecap: round; }
+.flujo-punto { fill: #e5472d; }
+.flujo-pin { fill: var(--tinta); stroke: #fff; stroke-width: 3; }
+.flujo-txt { font: 750 17px var(--display); fill: var(--tinta); paint-order: stroke; stroke: var(--blanco); stroke-width: 4px; }
+.perfiles { display: grid; gap: 10px; }
+.perfil { display: flex; gap: 14px; align-items: flex-start; padding: 14px; border-radius: 20px; background: var(--cal); }
+.perfil-icono { flex: none; width: 48px; height: 48px; border-radius: 16px; display: grid; place-items: center; background: var(--laguna-claro); color: var(--abismo); }
+.perfil-icono svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.perfil h4 { font: 750 18px/1.15 var(--display); }
+.perfil p { font-weight: 600; color: var(--laguna-hondo); margin-top: 2px; }
+.perfil small { font-size: 13.5px; color: var(--tinta-3); }
+
+/* ---- nosotros */
+.nosotros { padding: clamp(90px, 11vw, 150px) var(--gutter); background: linear-gradient(160deg, #0b3440, #062830 60%); color: var(--cal); }
+.nosotros .eyebrow { color: var(--laguna-claro); }
+.nosotros .titulo-seccion em { color: var(--laguna-claro); }
+.nosotros .nota { color: rgba(243, 245, 241, .8); max-width: 64ch; }
+.tuberia { max-width: var(--ancho); margin: clamp(36px, 5vw, 56px) auto 0; display: flex; flex-wrap: wrap; gap: 10px; counter-reset: paso; }
+.tuberia li { display: flex; align-items: center; gap: 10px; font: 700 16px var(--display); }
+.tuberia li span { padding: 12px 18px; border-radius: 999px; background: rgba(139, 227, 216, .12); border: 1px solid rgba(139, 227, 216, .3); }
+.tuberia li:not(:last-child)::after { content: "→"; color: var(--laguna-claro); }
+.tuberia li:last-child span { background: var(--flamboyan); border-color: var(--flamboyan); }
+.metodos { max-width: var(--ancho); margin: 28px auto 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 14px; }
+.metodo { display: grid; gap: 10px; align-content: start; padding: 24px; border-radius: 26px; background: rgba(255, 255, 255, .05); border: 1px solid rgba(243, 245, 241, .12); transition: transform .4s var(--ease), background .4s; }
+.metodo:hover { transform: translateY(-4px); background: rgba(255, 255, 255, .09); }
+.metodo span { width: 48px; height: 48px; border-radius: 16px; display: grid; place-items: center; background: var(--laguna-claro); color: var(--abismo); }
+.metodo svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.metodo h3 { font: 750 21px/1.1 var(--display); }
+.metodo p { font-size: 15.5px; color: rgba(243, 245, 241, .78); }
+.nos-etica { max-width: var(--ancho); margin: 26px auto 0; padding: 16px 20px; border-radius: 18px; background: rgba(229, 71, 45, .14); font-weight: 600; }
+
+/* ---- hoteles con foto y modal de mapa */
+.hotel { padding: 0; overflow: hidden; }
+.hotel > :not(.hotel-foto) { margin-inline: 20px; }
+.hotel > :last-child { margin-bottom: 20px; }
+.hotel-foto { position: relative; aspect-ratio: 16 / 10; background: var(--cal-2); overflow: hidden; margin-bottom: 4px; }
+.hotel-foto img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease); }
+.hotel:hover .hotel-foto img { transform: scale(1.06); }
+.hotel-foto .hotel-tipo { position: absolute; left: 12px; top: 12px; background: rgba(255, 255, 255, .92); }
+.mapa-modal { width: min(760px, calc(100vw - 32px)); padding: 0; border: 0; border-radius: 26px; overflow: hidden; background: var(--blanco); color: var(--tinta); box-shadow: 0 40px 100px -30px rgba(0, 0, 0, .6); }
+.mapa-modal::backdrop { background: rgba(6, 40, 48, .55); backdrop-filter: blur(4px); }
+.mapa-cab { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; font: 750 18px var(--display); }
+.mapa-cab button { width: 36px; height: 36px; border: 0; border-radius: 50%; background: var(--cal); font-size: 22px; cursor: pointer; color: inherit; }
+.mapa-modal iframe { display: block; width: 100%; height: min(60vh, 460px); border: 0; }
+.mapa-nota { padding: 12px 18px 16px; font-size: 13.5px; color: var(--tinta-3); }
+.mapa-nota a { font-weight: 700; color: var(--laguna-hondo); }
+
+/* ================================================= modo nocturno
+   Solo cambia las secciones claras; las que ya son oscuras quedan igual. */
+[data-tema="noche"] { color-scheme: dark; }
+[data-tema="noche"] body,
+[data-tema="noche"] :is(.barra, .portada, .resultado, .postales, .comida, .dormir, .descubre, .faq, .destinos, .asistente, .mapa-modal, .cal-pop, .destino-lista) {
+  --cal: #0c1a1f; --cal-2: #16272d; --blanco: #11232a; --tinta: #eef3f1; --tinta-2: #bccaca; --tinta-3: #8fa3a5;
+  --linea: rgba(238, 243, 241, .14); --laguna-hondo: #8be3d8;
+}
+[data-tema="noche"] body { background: #0c1a1f; }
+[data-tema="noche"] .barra.solida { background: rgba(12, 26, 31, .82); }
+[data-tema="noche"] .idioma { background: rgba(255, 255, 255, .06); }
+[data-tema="noche"] .idioma select option { background: #11232a; color: #eef3f1; }
+[data-tema="noche"] .fondo-destino::after {
+  background: linear-gradient(90deg, rgba(8, 18, 22, .92) 0%, rgba(8, 18, 22, .74) 38%, rgba(8, 18, 22, .2) 70%, rgba(8, 18, 22, .05) 100%),
+              linear-gradient(180deg, rgba(8, 18, 22, .6) 0%, rgba(8, 18, 22, 0) 22%); }
+[data-tema="noche"] .portada::after { background: linear-gradient(180deg, transparent, rgba(12, 26, 31, .95)); }
+[data-tema="noche"] .fondo-capa video, [data-tema="noche"] .fondo-capa img { filter: brightness(.75) saturate(1.05); }
+[data-tema="noche"] .buscador { background: rgba(17, 35, 42, .82); border-color: rgba(255, 255, 255, .1); }
+[data-tema="noche"] .sugerencias button { background: rgba(17, 35, 42, .7); border-color: rgba(255, 255, 255, .12); }
+[data-tema="noche"] .abrir-cal { background: #1b3139; }
+[data-tema="noche"] .playa-3d { background: radial-gradient(90% 80% at 50% 38%, #1d3a42 0%, #122a31 55%, #0c1a1f 100%); }
+[data-tema="noche"] .playa-caja figcaption { background: rgba(17, 35, 42, .9); }
+[data-tema="noche"] .comida { background: #1a1410; }
+[data-tema="noche"] .consejos { background: #241b15; }
+[data-tema="noche"] .comida .eyebrow { color: #fdba74; }
+[data-tema="noche"] .comida .titulo-seccion em { color: #fb923c; }
+[data-tema="noche"] .plato-foto { border-color: #241b15; }
+[data-tema="noche"] .resena { color: #fdba74; }
+[data-tema="noche"] .hotel-foto .hotel-tipo { background: rgba(17, 35, 42, .92); }
+[data-tema="noche"] .zonas button:not(.activa) { background: #11232a; }
+[data-tema="noche"] .tesela figcaption { background: rgba(17, 35, 42, .9); }
+[data-tema="noche"] .panel-detalle span { background: #eef3f1; color: #0c1a1f; }
+[data-tema="noche"] .flujo-tierra { fill: #1f4a4f; stroke: #8be3d8; }
+[data-tema="noche"] .flujo-txt { stroke: #11232a; }
+[data-tema="noche"] .asis-form input { background: #16272d; }
+[data-tema="noche"] .vuelos:hover, [data-tema="noche"] .barra-vuelos:hover { background: #8be3d8; color: #0c1a1f; }
+[data-tema="noche"] .pie { background: #081418; }
+
+@media (max-width: 1180px) { .barra nav { gap: 18px; } .barra nav a { font-size: 14.5px; } }
+
+
+.viaje .olas-lancha path { animation: olaMapa 2.4s ease-in-out infinite alternate; }
+#v-lancha > path:nth-child(2), #v-lancha rect, #v-lancha circle { animation: cabeceo 1.2s ease-in-out infinite alternate; transform-box: view-box; }
+@keyframes cabeceo { to { transform: translateY(4px); } }
+.viaje .estela-lancha { stroke-dasharray: 30 20; animation: estela .6s linear infinite; }
+
+.barra nav a { white-space: nowrap; }
+@media (max-width: 1440px) { .barra nav { gap: 16px; } .barra nav a { font-size: 14px; } .barra { gap: 18px; } }
+@media (max-width: 1300px) { .barra nav { display: none; } }

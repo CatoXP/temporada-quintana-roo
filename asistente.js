@@ -195,7 +195,7 @@
         const d = destino || ctx.destinoActual();
         const p = await plan(d, proximaFecha());
         const meses = p.mejores_meses.map((m) => `${ctx.mes(m.periodo)} ${m.anio}`);
-        return { texto: b.mejor.replace("{d}", ctx.nombreDestino(d)).replace("{m}", lista(meses)),
+        return { texto: b.mejor.replace("{d}", ctx.nombreDestino(d)).replace("{m}", lista(meses)) + " " + esc(ctx.t("inferido_chat")),
                  accion: { texto: ctx.t("nav_cuando"), fn: () => ctx.ir("#cuando", d) } };
       }
       if (id === "estado" || (!seguro && destino && (fecha || quiere.estado))) {
@@ -205,7 +205,7 @@
         const [titulo, , frase] = ctx.nivel(p.prediccion.nivel);
         let x = frase;
         if (p.recomendacion) x += ` ${ctx.t("alt_titulo", { d: ctx.nombreDestino(p.recomendacion.destino_id) }).replace(/<[^>]+>/g, "")}`;
-        return { texto: b.estado.replace("{d}", ctx.nombreDestino(d)).replace("{f}", ctx.fechaLarga(f)).replace("{n}", `<b>${titulo}</b>`).replace("{x}", esc(x)),
+        return { texto: b.estado.replace("{d}", ctx.nombreDestino(d)).replace("{f}", ctx.fechaLarga(f)).replace("{n}", `<b>${titulo}</b>`).replace("{x}", esc(x)) + ` <small>${esc(ctx.t("inferido_chat"))}</small>`,
                  accion: { texto: ctx.t("ver"), fn: () => ctx.planear(d, f) } };
       }
       if (seguro && M.respuestas[id]) {

@@ -12,7 +12,7 @@
   const OLAS = { tranquilo: 1, moderado: 2, concurrido: 3, lleno: 4 };
   const PREVIA = { tranquilo: 45, moderado: 63, concurrido: 80, lleno: 90 };
   const AEROPUERTO = { cancun: ["CUN", "Cancún"], riviera_maya: ["TQO", "Tulum"], gran_costa_maya: ["CTM", "Chetumal"] };
-  const FOTO_DESTINO = { cancun: "img/cancun.jpg", riviera_maya: "img/tulum.jpg", gran_costa_maya: "img/canal_piratas.jpg" };
+  const FOTO_DESTINO = { cancun: "img/postal_cancun.jpg", riviera_maya: "img/tulum.jpg", gran_costa_maya: "img/postal_bacalar.jpg" };
   const NOMBRE = { cancun: "Cancún", riviera_maya: "Riviera Maya", gran_costa_maya: "Gran Costa Maya" };
   const LOCALE = { es: "es-MX", en: "en-US", fr: "fr-FR", pt: "pt-BR" };
   const COCINA = { regional: "regional", yucatecan: "yucateca", mayan: "maya", local: "local", seafood: "mariscos", fish: "pescado", mexican: "mexicana" };
@@ -24,10 +24,10 @@
     info: '<svg viewBox="0 0 24 24"><path d="M2.5 15.5l19-7-2-2.5-7 2.5-6-4.5-2 .8 4 5-4 1.5-2.5-1.5-1.5.6 2 3.6z"/></svg>',
   };
   const RUTA_ICONO = [
-    '<svg viewBox="0 0 24 24"><path d="M2.5 15.5l19-7-2-2.5-7 2.5-6-4.5-2 .8 4 5-4 1.5-2.5-1.5-1.5.6 2 3.6z"/></svg>',
-    '<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="14" rx="4"/><path d="M5 11h14M8 21l2-4M16 21l-2-4"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/></svg>',
     '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="3"/><path d="M3 10h18M7 20v-3M17 20v-3"/></svg>',
     '<svg viewBox="0 0 24 24"><path d="M4 16l2-6h12l2 6v3H4z"/><circle cx="8" cy="17" r="1.5"/><circle cx="16" cy="17" r="1.5"/></svg>',
+    '<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="14" rx="4"/><path d="M5 11h14M8 21l2-4M16 21l-2-4"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/></svg>',
+    '<svg viewBox="0 0 24 24"><path d="M2.5 15.5l19-7-2-2.5-7 2.5-6-4.5-2 .8 4 5-4 1.5-2.5-1.5-1.5.6 2 3.6z"/></svg>',
     '<svg viewBox="0 0 24 24"><path d="M3 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0M5 14l1-5h12l1 5M9 9V5h6v4"/></svg>',
   ];
   const reducido = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -203,7 +203,7 @@
   function animarViaje() {
     const letrero = $("#viaje-letrero"), bienvenida = $("#v-bienvenida");
     const paradas = () => $$(".parada");
-    const fases = [["mov_bus", [2, 3]], ["mov_tren", [1]], ["mov_avion", [0]], ["mov_bienvenida", [0, 1, 2, 3, 4]]];
+    const fases = [["mov_bus", [0, 1]], ["mov_tren", [2]], ["mov_avion", [3]], ["mov_lancha", [4]], ["mov_bienvenida", [0, 1, 2, 3, 4]]];
     let fase = -1;
     const ponerFase = (f) => {
       if (f === fase) return;
@@ -218,27 +218,30 @@
     ruta.style.strokeDasharray = `${largo}`;
     if (!hayGsap || reducido) {
       $("#v-qroo").setAttribute("opacity", 1);
-      $$("#v-bus, #v-tren, #v-avion").forEach((el) => el.setAttribute("opacity", 0));
+      $$("#v-bus, #v-tren, #v-avion, #v-agua").forEach((el) => el.setAttribute("opacity", 0));
       ruta.style.strokeDashoffset = 0;
-      ponerFase(3);
+      ponerFase(4);
       return;
     }
     ruta.style.strokeDashoffset = largo;
     const tl = gsap.timeline({ defaults: { ease: "none" }, onUpdate: () => {
-      const p = tl.progress();
-      ponerFase(p < 0.27 ? 0 : p < 0.5 ? 1 : p < 0.7 ? 2 : 3);
+      const x = tl.time();
+      ponerFase(x < 0.9 ? 0 : x < 1.8 ? 1 : x < 2.85 ? 2 : x < 4.1 ? 3 : 4);
     } });
     tl.fromTo("#v-bus", { x: -340 }, { x: 1300, duration: 1 }, 0)
       .fromTo("#v-tren", { x: -900 }, { x: 1300, duration: 1 }, 0.8)
       .fromTo("#v-avion", { x: -300, y: 340, rotation: -4, transformOrigin: "50% 50%" }, { x: 1320, y: 150, rotation: -10, duration: 1.1 }, 1.7)
-      .to("#v-paisaje", { opacity: 0, duration: 0.5 }, 2.75)
-      .fromTo("#v-qroo", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 2.75)
-      .fromTo("#v-mapa", { scale: 0.45, transformOrigin: "50% 50%", rotation: -8 }, { scale: 0.84, rotation: 0, duration: 0.7, ease: "back.out(1.4)" }, 2.8)
-      .to(ruta, { strokeDashoffset: 0, duration: 0.7 }, 3.2)
-      .fromTo(".pin", { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.3, stagger: 0.08, ease: "back.out(3)" }, 3.2)
-      .fromTo("#v-bienvenida", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4 }, 3.5)
+      .fromTo("#v-agua", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 2.75)
+      .fromTo("#v-lancha", { x: -300, y: 0 }, { x: 1320, y: -20, duration: 1.15 }, 2.9)
+      .fromTo("#v-velero", { x: -200 }, { x: 700, duration: 1.3 }, 2.8)
+      .to("#v-paisaje", { opacity: 0, duration: 0.4 }, 4.1)
+      .to("#v-agua", { opacity: 0, duration: 0.4 }, 4.1)
+      .fromTo("#v-qroo", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 4.1)
+      .fromTo("#v-mapa", { scale: 0.45, transformOrigin: "50% 50%", rotation: -8 }, { scale: 0.84, rotation: 0, duration: 0.7, ease: "back.out(1.4)" }, 4.15)
+      .to(ruta, { strokeDashoffset: 0, duration: 0.7 }, 4.55)
+      .fromTo(".pin", { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.3, stagger: 0.08, ease: "back.out(3)" }, 4.55)
       .to({}, { duration: 0.3 });
-    ScrollTrigger.create({ trigger: ".moverse", start: "top top", end: () => "+=" + window.innerHeight * 2.4, pin: true, scrub: 0.6, animation: tl, anticipatePin: 1 });
+    ScrollTrigger.create({ trigger: ".moverse", start: "top top", end: () => "+=" + window.innerHeight * 3.2, pin: true, scrub: 0.6, animation: tl, anticipatePin: 1 });
   }
 
   function animarMosaico() {
@@ -248,6 +251,194 @@
     });
     gsap.from(".tesela", { y: 70, opacity: 0, duration: 1.1, stagger: 0.06, ease: "expo.out", scrollTrigger: { trigger: "#mosaico", start: "top 85%", once: true } });
     gsap.from(".plato", { y: 60, opacity: 0, rotate: (i) => (i % 2 ? 2 : -2), duration: 1, stagger: 0.08, ease: "expo.out", scrollTrigger: { trigger: "#platos", start: "top 85%", once: true } });
+  }
+
+
+  // ------------------------------------------------------------- modo nocturno
+  (function tema() {
+    const btn = $("#tema");
+    let guardado = null;
+    try { guardado = localStorage.getItem("temporada-tema"); } catch (e) { /* sin almacenamiento */ }
+    const aplicar = (noche) => {
+      document.documentElement.dataset.tema = noche ? "noche" : "dia";
+      btn.setAttribute("aria-pressed", String(noche));
+      btn.setAttribute("aria-label", t(noche ? "tema_dia" : "tema_noche"));
+      btn.title = btn.getAttribute("aria-label");
+    };
+    aplicar(guardado ? guardado === "noche" : matchMedia("(prefers-color-scheme: dark)").matches);
+    btn.addEventListener("click", () => {
+      const noche = document.documentElement.dataset.tema !== "noche";
+      aplicar(noche);
+      try { localStorage.setItem("temporada-tema", noche ? "noche" : "dia"); } catch (e) { /* sin almacenamiento */ }
+    });
+    estado.temaTexto = () => aplicar(document.documentElement.dataset.tema === "noche");
+  })();
+
+  // ------------------------------------------------------------- mapa de Google
+  const modal = $("#mapa-modal");
+  function abrirMapa(nombre, embed, enlace) {
+    $("#mapa-titulo").textContent = nombre;
+    $("#mapa-iframe").src = embed;
+    $("#mapa-abrir").href = enlace;
+    if (modal.showModal) modal.showModal(); else window.open(enlace, "_blank", "noopener");
+  }
+  $("#mapa-cerrar").addEventListener("click", () => { modal.close(); $("#mapa-iframe").src = "about:blank"; });
+  modal.addEventListener("click", (e) => { if (e.target === modal) { modal.close(); $("#mapa-iframe").src = "about:blank"; } });
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-mapa]");
+    if (!b) return;
+    e.preventDefault();
+    abrirMapa(b.dataset.nombre, b.dataset.mapa, b.getAttribute("href"));
+  });
+  const FOTOS_ZONA = { "Cancún": ["postal_cancun", "cancun", "el_rey", "museo_maya_cancun", "palapas"],
+                       "Playa del Carmen": ["postal_playa", "playa", "quinta_avenida"], "Tulum": ["postal_tulum", "tulum", "dos_ojos", "sian_kaan"],
+                       "Bacalar": ["postal_bacalar", "bacalar", "bacalar_manana", "canal_piratas", "bacalar_orilla"],
+                       "Mahahual": ["mahahual_barcas", "mahahual", "mahahual_malecon"], "Chetumal": ["postal_chetumal", "chetumal", "museo_maya"] };
+  const fotoZona = (zona, i) => { const l = FOTOS_ZONA[zona] || ["postal_cancun"]; return foto(l[i % l.length]); };
+
+  // ---------------------------------------------------------- rueda del año
+  let rueda = null;
+  function pintarRueda(meta) {
+    const svg = $("#rueda");
+    const cal = meta.calendario.filter((c) => c.periodo >= periodoHoy);
+    const periodos = [...new Set(cal.map((c) => c.periodo))].slice(0, 12);
+    const orden = ["cancun", "riviera_maya", "gran_costa_maya"];
+    const COLOR = { tranquilo: "#2bc4b3", moderado: "#1fa4ae", concurrido: "#f2a541", lleno: "#e5472d" };
+    const CX = 360, CY = 360, N = periodos.length, paso = (Math.PI * 2) / N;
+    const anillo = { cancun: [250, 330], riviera_maya: [172, 244], gran_costa_maya: [96, 166] };
+    const punto = (r, a) => [CX + r * Math.sin(a), CY - r * Math.cos(a)];
+    const arco = (r0, r1, a0, a1) => {
+      const [x0, y0] = punto(r1, a0), [x1, y1] = punto(r1, a1), [x2, y2] = punto(r0, a1), [x3, y3] = punto(r0, a0);
+      return `M${x0} ${y0}A${r1} ${r1} 0 0 1 ${x1} ${y1}L${x2} ${y2}A${r0} ${r0} 0 0 0 ${x3} ${y3}Z`;
+    };
+    let html = `<defs><filter id="sombra-rueda"><feDropShadow dx="0" dy="6" stdDeviation="8" flood-opacity=".25"/></filter></defs>
+      <circle cx="${CX}" cy="${CY}" r="344" class="rueda-fondo"/>`;
+    orden.forEach((id) => {
+      const [r0, rMax] = anillo[id];
+      periodos.forEach((p, i) => {
+        const c = cal.find((x) => x.destino_id === id && x.periodo === p);
+        const k = Math.max(0.25, Math.min(1, (c.p50 - 30) / 60));
+        const r1 = r0 + (rMax - r0) * k;
+        const a0 = i * paso + 0.02, a1 = (i + 1) * paso - 0.02;
+        html += `<path class="gajo" d="${arco(r0, r1, a0, a1)}" fill="${COLOR[c.nivel]}" data-periodo="${p}" data-destino="${id}" style="--i:${i}"></path>`;
+      });
+      const [lx, ly] = punto((r0 + rMax) / 2, -0.001);
+      html += `<text class="rueda-anillo" x="${CX + 6}" y="${CY - r0 - 6}">${NOMBRE[id]}</text>`;
+    });
+    periodos.forEach((p, i) => {
+      const [x, y] = punto(356, (i + 0.5) * paso);
+      html += `<text class="rueda-mes" x="${x}" y="${y}" data-periodo="${p}" text-anchor="middle" dominant-baseline="middle">${mesCorto(p)}${+p.slice(5) === 1 ? "·" + p.slice(2, 4) : ""}</text>`;
+    });
+    html += `<circle cx="${CX}" cy="${CY}" r="88" class="rueda-centro-fondo"/>
+      <text class="rueda-centro-mes" id="rc-mes" x="${CX}" y="${CY - 8}" text-anchor="middle"></text>
+      <text class="rueda-centro-sub" id="rc-sub" x="${CX}" y="${CY + 22}" text-anchor="middle"></text>`;
+    svg.innerHTML = html;
+    svg.setAttribute("aria-label", t("cuando_nota"));
+
+    const leyenda = $("#rueda-leyenda");
+    const centro = (p) => {
+      $("#rc-mes").textContent = p ? capital(mes(p)) : "";
+      $("#rc-sub").textContent = p ? p.slice(0, 4) : t("rueda_centro");
+      leyenda.innerHTML = p ? orden.map((id) => {
+        const c = cal.find((x) => x.destino_id === id && x.periodo === p);
+        return `<div data-nivel="${c.nivel}"><b>${NOMBRE[id]}</b>${olitas(OLAS[c.nivel])}<span>${esc(nivelTxt(c.nivel)[1])}</span></div>`;
+      }).join("") : Object.keys(OLAS).map((n) => `<div data-nivel="${n}"><b>${esc(nivelTxt(n)[1])}</b>${olitas(OLAS[n])}</div>`).join("");
+    };
+    const marcar = (p, clase) => {
+      $$(".gajo, .rueda-mes", svg).forEach((g) => g.classList.toggle(clase, g.dataset.periodo === p));
+    };
+    let fijo = null;
+    $$(".gajo, .rueda-mes", svg).forEach((g) => {
+      g.addEventListener("pointerenter", () => { marcar(g.dataset.periodo, "hover"); centro(g.dataset.periodo); });
+      g.addEventListener("click", () => planear(estado.destino, mitad(g.dataset.periodo), true));
+    });
+    svg.addEventListener("pointerleave", () => { marcar(null, "hover"); centro(fijo); });
+    centro(null);
+    if (hayGsap && !reducido) {
+      gsap.from($$(".gajo", svg), { scale: 0, transformOrigin: `${CX}px ${CY}px`, duration: 0.9, ease: "expo.out",
+        stagger: { each: 0.012 }, scrollTrigger: { trigger: svg, start: "top 80%", once: true } });
+    }
+    rueda = {
+      elegir(p, destino) {
+        fijo = periodos.includes(p) ? p : null;
+        marcar(fijo, "elegido");
+        $$(".gajo", svg).forEach((g) => g.classList.toggle("atenuado", g.dataset.destino !== destino));
+        centro(fijo);
+      },
+    };
+  }
+
+  // ----------------------------------------------------------- descubrimos
+  const ICONO_PERSONA = '<svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="3.2"/><path d="M6 21v-5.5A4.5 4.5 0 0 1 10.5 11h3a4.5 4.5 0 0 1 4.5 4.5V21z"/></svg>';
+  const ICONO_PERFIL = {
+    crucerista: '<svg viewBox="0 0 24 24"><path d="M3 15h18l-2.5 5h-13zM6 15V9h12v6M9 9V5h6v4M3 21c2 1 4 1 6 0s4-1 6 0 4 1 6 0"/></svg>',
+    fronterizo: '<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M9 16h6"/></svg>',
+    pasajero_tren: RUTA_ICONO[2],
+    huesped_norte: '<svg viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="13" rx="2"/><path d="M9 7V4h6v3M9 12h6"/></svg>',
+  };
+  async function pintarDescubre() {
+    let d;
+    try { d = await api("/api/viaja/descubre"); } catch (e) { return; }
+    const orden = ["cancun", "riviera_maya", "gran_costa_maya"];
+    const por = Object.fromEntries(d.destinos.map((x) => [x.id, x]));
+    $("#personitas").innerHTML = orden.map((id) => {
+      const n = Math.round(por[id].retencion * 10);
+      return `<div class="fila-personas"><b>${NOMBRE[id]}</b><div>${Array.from({ length: 10 }, (_, i) =>
+        `<i class="${i < n ? "duerme" : "se-va"}">${ICONO_PERSONA}</i>`).join("")}</div></div>`;
+    }).join("") + `<p class="personas-ley"><i class="duerme">${ICONO_PERSONA}</i>${esc(t("se_quedan"))}<i class="se-va">${ICONO_PERSONA}</i>${esc(t("se_van"))}</p>`;
+    const maxUsd = Math.max(...d.destinos.map((x) => x.usd_por_visitante));
+    $("#monedas").innerHTML = orden.map((id) => {
+      const n = Math.max(1, Math.round((por[id].usd_por_visitante / maxUsd) * 12));
+      return `<div class="pila"><div class="pila-monedas">${Array.from({ length: n }, (_, i) => `<i style="--i:${i}"></i>`).join("")}</div><b>${NOMBRE[id]}</b></div>`;
+    }).join("");
+    // flujos: forma del estado y puntos que viajan
+    const pos = { cancun: [303, 51], riviera_maya: [254, 138], gran_costa_maya: [150, 350] };
+    const lin = [];
+    const pares = {};
+    d.viajes.forEach((v) => {
+      const k = [v.origen, v.destino].sort().join("|");
+      pares[k] = (pares[k] || 0) + v.viajes_est;
+    });
+    const maxV = Math.max(...Object.values(pares));
+    let svgF = `<g transform="translate(50 20) scale(.95)"><use href="#qroo-forma" class="flujo-tierra"/>`;
+    Object.entries(pares).forEach(([k, v], j) => {
+      const [a, b] = k.split("|"), [x0, y0] = pos[a], [x1, y1] = pos[b];
+      const mx = (x0 + x1) / 2 + 40, my = (y0 + y1) / 2;
+      const d0 = `M${x0} ${y0} Q${mx} ${my} ${x1} ${y1}`;
+      const grosor = 1.5 + 8 * Math.sqrt(v / maxV);
+      const puntos = Math.max(1, Math.round(10 * Math.sqrt(v / maxV)));
+      svgF += `<path d="${d0}" class="flujo-ruta" stroke-width="${grosor}"/>`;
+      for (let i = 0; i < puntos; i++) {
+        svgF += `<circle r="3.2" class="flujo-punto"><animateMotion dur="${(3 + j).toFixed(1)}s" begin="${(i * (3 + j) / puntos).toFixed(2)}s" repeatCount="indefinite" keyPoints="${i % 2 ? "1;0" : "0;1"}" keyTimes="0;1" calcMode="linear" path="${d0}"/></circle>`;
+      }
+    });
+    orden.forEach((id) => {
+      const [x, y] = pos[id];
+      svgF += `<circle cx="${x}" cy="${y}" r="9" class="flujo-pin"/><text x="${id === "gran_costa_maya" ? x - 14 : x + 14}" y="${y + 5}" text-anchor="${id === "gran_costa_maya" ? "end" : "start"}" class="flujo-txt">${NOMBRE[id]}</text>`;
+    });
+    $("#flujos").innerHTML = svgF + "</g>";
+    const perf = C.ui[idioma].perfiles || C.ui.es.perfiles;
+    $("#perfiles").innerHTML = d.perfiles.map((p) => {
+      const [n, inv, mom] = perf[p.id] || [p.id, "", ""];
+      return `<article class="perfil"><span class="perfil-icono">${ICONO_PERFIL[p.id] || ""}</span><div><h4>${esc(n)}</h4><p>“${esc(inv)}”</p><small>${esc(mom)}</small></div></article>`;
+    }).join("");
+    if (hayGsap && !reducido) {
+      gsap.from(".fila-personas i", { y: 20, opacity: 0, duration: 0.5, stagger: 0.02, ease: "back.out(2)", scrollTrigger: { trigger: "#personitas", start: "top 85%", once: true } });
+      gsap.from(".pila-monedas i", { y: -120, opacity: 0, duration: 0.7, stagger: 0.03, ease: "bounce.out", scrollTrigger: { trigger: "#monedas", start: "top 85%", once: true } });
+    }
+  }
+
+  function pintarNosotros() {
+    $("#tuberia").innerHTML = t("tuberia").map((x) => `<li><span>${esc(x)}</span></li>`).join("");
+    const ICON = [
+      '<svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="18" cy="17" r="2"/></svg>',
+      '<svg viewBox="0 0 24 24"><path d="M3 20h18M5 16l4-6 4 3 5-8"/></svg>',
+      '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.3"/><circle cx="15" cy="15" r="1.3"/><circle cx="15" cy="9" r="1.3"/><circle cx="9" cy="15" r="1.3"/></svg>',
+      '<svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="12" r="2"/><path d="M8 6l8 5M8 18l8-5"/></svg>',
+      '<svg viewBox="0 0 24 24"><path d="M4 18c4-8 12-8 16-12M15 6h5v5"/></svg>',
+      '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg>',
+    ];
+    $("#metodos").innerHTML = t("metodos").map(([n, x], i) => `<article class="metodo"><span>${ICON[i]}</span><h3>${esc(n)}</h3><p>${esc(x)}</p></article>`).join("");
   }
 
   // ------------------------------------------------------------------ buscador
@@ -301,6 +492,7 @@
       elegirDestino(b.dataset.destino);
       lista.hidden = true;
       botonDestino.setAttribute("aria-expanded", "false");
+      if (estado.plan && estado.plan.destino.id !== b.dataset.destino) planear(b.dataset.destino, estado.fecha, false);
     }));
   }
   let fondoActual = null, relojFondo = 0;
@@ -459,6 +651,9 @@
     ponerPista(capital(fechaLarga(estado.fecha)), "ok");
     if (estado.asistente) estado.asistente.idiomaCambiado();
     if (estado.faseViaje) estado.faseViaje();
+    if (estado.temaTexto) estado.temaTexto();
+    pintarNosotros();
+    pintarDescubre();
     if (hayGsap) ScrollTrigger.refresh();
   });
   $("#faq-bot").addEventListener("click", () => estado.asistente && estado.asistente.preguntar(C.bot[idioma].sugerencias[1]));
@@ -472,7 +667,8 @@
     $("#marquesina").innerHTML = items + items;
 
     const orden = ["gran_costa_maya", "riviera_maya", "cancun"];
-    if (!soloTextos && hay3D) {
+    pintarRueda(meta);
+    if (false) {
       const series = orden.map((id) => ({ id, nombre: NOMBRE[id], valores: periodos.map((p) => cal.find((c) => c.destino_id === id && c.periodo === p).p50) }));
       const tip = $("#ola-tip");
       try {
@@ -488,7 +684,7 @@
         });
       } catch (e) { console.warn("WebGL", e); }
     }
-    if (estado.escenas.ola) estado.escenas.ola.setEtiquetasMes((p) => (+p.slice(5) === 1 ? `${mesCorto(p)}<br><b>${p.slice(0, 4)}</b>` : mesCorto(p)));
+    if (false) estado.escenas.ola.setEtiquetasMes((p) => (+p.slice(5) === 1 ? `${mesCorto(p)}<br><b>${p.slice(0, 4)}</b>` : mesCorto(p)));
 
     $("#acordeon").innerHTML = meta.destinos.map((d, i) => {
       const propios = cal.filter((c) => c.destino_id === d.id && c.sargazo !== "alto").sort((a, b) => a.p50 - b.p50).slice(0, 2);
@@ -593,7 +789,7 @@
     $("#mejores").innerHTML = p.mejores_meses.map((m) =>
       `<button type="button" class="mejor" data-periodo="${m.periodo}" data-nivel="${m.nivel}"><strong>${mes(m.periodo)}</strong><small>${m.anio}</small>${olitas(OLAS[m.nivel])}<span>${esc(t("planear_mes", { m: mes(m.periodo) }))}</span></button>`).join("");
     $$(".mejor").forEach((b) => b.addEventListener("click", () => planear(estado.destino, mitad(b.dataset.periodo), true)));
-    if (estado.escenas.ola) { estado.escenas.ola.setElegido(p.mes.periodo); estado.escenas.ola.setDestacado(p.destino.id); }
+    if (rueda) rueda.elegir(p.mes.periodo, p.destino.id);
 
     const porId = Object.fromEntries(p.lugares.map((l) => [l.id, l]));
     const claves = { "mañana": "manana", tarde: "tarde", noche: "noche" };
@@ -627,15 +823,16 @@
       $("#restaurantes").innerHTML = p.restaurantes.filter((r) => !zona || r.zona === zona).map((r) => {
         const coc = idioma === "es" ? r.cocina.map((c) => COCINA[c]).filter(Boolean).slice(0, 2).join(" · ") : "";
         return `<li><span class="rest-nombre">${esc(r.nombre)}</span><small>${esc(r.zona)}${coc ? " · " + esc(coc) : ""}</small>
-          <a class="resena" href="${esc(r.maps)}" target="_blank" rel="noopener">★ ${esc(t("ver_resenas"))}</a></li>`;
+          <a class="resena" href="${esc(r.maps)}" data-mapa="${esc(r.mapa_embed)}" data-nombre="${esc(r.nombre)}" target="_blank" rel="noopener">${esc(t("ver_calificacion"))}</a></li>`;
       }).join("");
     };
     const pintarHoteles = (zona) => {
-      $("#hoteles").innerHTML = p.hoteles.filter((h) => !zona || h.zona === zona).map((h) => `<article class="hotel">
-        <span class="hotel-tipo">${esc(t("tipo_" + h.tipo))}</span>
+      $("#hoteles").innerHTML = p.hoteles.filter((h) => !zona || h.zona === zona).map((h, i) => `<article class="hotel">
+        <div class="hotel-foto"><img src="${esc(h.imagen || fotoZona(h.zona, i))}" alt="" loading="lazy" referrerpolicy="no-referrer"
+          onerror="this.onerror=null;this.src='${fotoZona(h.zona, i)}'"><span class="hotel-tipo">${esc(t("tipo_" + h.tipo))}</span></div>
         <h3>${esc(h.nombre)}</h3>
         <p>${esc(h.zona)}${h.estrellas ? ` · <span class="hotel-estrellas" title="${esc(t("estrellas_cat", { n: h.estrellas }))}">${"★".repeat(h.estrellas)}</span>` : ""}</p>
-        <div class="hotel-acciones"><a class="resena" href="${esc(h.maps)}" target="_blank" rel="noopener">★ ${esc(t("ver_resenas"))}</a>${h.web ? `<a href="${esc(h.web)}" target="_blank" rel="noopener">${esc(t("sitio_web"))} ↗</a>` : ""}</div>
+        <div class="hotel-acciones"><a class="resena" href="${esc(h.maps)}" data-mapa="${esc(h.mapa_embed)}" data-nombre="${esc(h.nombre)}" target="_blank" rel="noopener">${esc(t("ver_calificacion"))}</a>${h.web ? `<a href="${esc(h.web)}" target="_blank" rel="noopener">${esc(t("sitio_web"))} ↗</a>` : ""}</div>
       </article>`).join("");
       aparecer(".hotel", $("#hoteles"));
     };
@@ -680,6 +877,8 @@
   async function iniciar() {
     try { estado.creditos = await fetch("img/creditos.json").then((r) => r.json()); } catch (e) { estado.creditos = {}; }
     pintarIdiomaFijo();
+    pintarNosotros();
+    pintarDescubre();
     iniciarMovimiento();
     if (hay3D) {
       try {
