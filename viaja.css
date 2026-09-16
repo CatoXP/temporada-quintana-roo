@@ -589,13 +589,4 @@ ol, ul { padding: 0; list-style: none; }
   #v-bienvenida { font-size: 54px; }
 }
 
-/* ola v4: mar de día */
-.cuando .ola-3d { background: linear-gradient(180deg, #7fcfdc 0%, #bfe6e8 38%, #eaf4ef 58%, #d6efe9 100%); box-shadow: 0 60px 120px -60px rgba(0, 0, 0, .8); }
-.cuando .ola-mes { color: rgba(6, 40, 48, .7); font-weight: 750; }
-.cuando .ola-mes b { color: var(--laguna-hondo); }
-.cuando .ola-mes.hover { color: var(--tinta); transform-origin: center; }
-.cuando .ola-mes.elegido { color: #e5472d; text-shadow: none; }
-.cuando .ola-destino { color: var(--tinta); text-shadow: none; padding: 6px 12px; border-radius: 999px; background: rgba(255, 255, 255, .85); font-size: clamp(13px, 1.1vw, 16px); }
-.cuando .ola-destino.atenuado { opacity: .55; }
-
 .barra-vuelos { white-space: nowrap; }

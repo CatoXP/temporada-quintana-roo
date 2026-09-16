@@ -158,19 +158,61 @@
     }`;
 
   function geoPez() {
-    const cuerpo = new THREE.SphereGeometry(0.5, 12, 8);
-    cuerpo.scale(1, 0.42, 0.2);
-    const g = unir([cuerpo,
-      triangulo([-0.42, 0, 0], [-0.82, 0.26, 0], [-0.82, -0.26, 0]),
-      triangulo([0.08, 0.18, 0], [-0.22, 0.36, 0], [-0.24, 0.16, 0])]);
-    g.scale(0.5, 0.5, 0.5);
+    // cuerpo de huso (torno) acostado sobre x, aplanado de lado; cola en horquilla y aleta dorsal
+    const perfil = [];
+    for (let k = 0; k <= 16; k++) {
+      const t = k / 16;
+      const r = Math.pow(Math.sin(Math.PI * Math.pow(t, 0.8)), 0.9) * 0.2 * (1 - 0.55 * t);
+      perfil.push(new THREE.Vector2(Math.max(r, 0.004), 0.5 - t));
+    }
+    const cuerpo = new THREE.LatheGeometry(perfil, 18);
+    cuerpo.rotateZ(-Math.PI / 2);
+    cuerpo.scale(1, 1, 0.5);
+    const cola = new THREE.Shape();
+    cola.moveTo(-0.46, 0); cola.quadraticCurveTo(-0.62, 0.08, -0.74, 0.2); cola.quadraticCurveTo(-0.66, 0.02, -0.68, 0);
+    cola.quadraticCurveTo(-0.66, -0.02, -0.74, -0.2); cola.quadraticCurveTo(-0.62, -0.08, -0.46, 0);
+    const dorsal = new THREE.Shape();
+    dorsal.moveTo(0.1, 0.12); dorsal.quadraticCurveTo(-0.02, 0.26, -0.16, 0.24); dorsal.quadraticCurveTo(-0.1, 0.16, -0.2, 0.09);
+    const g = unir([cuerpo, new THREE.ShapeGeometry(cola, 6), new THREE.ShapeGeometry(dorsal, 6)]);
+    const pos = g.attributes.position;
+    const lado = new Float32Array(pos.count);
+    for (let v = 0; v < pos.count; v++) lado[v] = pos.getX(v);
+    g.setAttribute("aLargo", new THREE.BufferAttribute(lado, 1));
+    g.scale(0.62, 0.62, 0.62);
     return g;
   }
+  const VERT_PEZ = `
+    uniform float uT; attribute float aLargo; attribute float aFase;
+    varying vec3 vN; varying vec3 vCol; varying float vY; varying float vProf;
+    void main() {
+      vec3 p = position;
+      float cola = smoothstep(0.25, -0.75, aLargo);
+      p.z += sin(uT * 9.0 + aFase - aLargo * 5.0) * 0.09 * cola;
+      vY = aLargo < -0.44 ? 0.0 : position.y;
+      vec4 w = modelMatrix * instanceMatrix * vec4(p, 1.0);
+      vProf = w.y;
+      vN = normalize(mat3(modelMatrix * instanceMatrix) * normal);
+      vCol = instanceColor;
+      gl_Position = projectionMatrix * viewMatrix * w;
+    }`;
+  const FRAG_PEZ = `
+    varying vec3 vN; varying vec3 vCol; varying float vY; varying float vProf;
+    void main() {
+      vec3 N = normalize(vN);
+      if (!gl_FrontFacing) N = -N;
+      vec3 col = mix(vCol * 0.62, vCol, smoothstep(0.08, -0.02, vY));
+      col = mix(col, vec3(0.97, 0.97, 0.9), smoothstep(-0.03, -0.1, vY) * 0.7);
+      col *= 0.7 + 0.3 * max(dot(N, normalize(vec3(0.2, 1.0, 0.4))), 0.0);
+      col += pow(max(N.y, 0.0), 6.0) * 0.12;
+      float agua = clamp(-vProf * 0.28, 0.12, 0.45);
+      col = mix(col, vec3(0.16, 0.66, 0.70), agua);
+      gl_FragColor = vec4(col, 0.92);
+    }`;
 
   function tortuga() {
     const g = new THREE.Group();
     const piel = new THREE.MeshLambertMaterial({ color: 0x9fb784, emissive: 0x1d2a18 });
-    const caparazon = new THREE.Mesh(new THREE.SphereGeometry(0.55, 14, 10), new THREE.MeshLambertMaterial({ color: 0x5f7f3a, emissive: 0x1a2a0e, flatShading: true }));
+    const caparazon = new THREE.Mesh(new THREE.SphereGeometry(0.55, 24, 16), new THREE.MeshStandardMaterial({ color: 0x6b8a44, roughness: 0.55 }));
     caparazon.scale.set(1, 0.36, 0.8);
     g.add(caparazon);
     const panza = new THREE.Mesh(new THREE.SphereGeometry(0.52, 12, 8), new THREE.MeshLambertMaterial({ color: 0xe6d6a0 }));
@@ -185,7 +227,8 @@
     for (const [x, z, largo] of [[0.28, 1, 0.62], [0.28, -1, 0.62], [-0.36, 1, 0.3], [-0.36, -1, 0.3]]) {
       const pivote = new THREE.Group();
       pivote.position.set(x, 0, 0.3 * z);
-      const aleta = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.04, largo), piel);
+      const aleta = new THREE.Mesh(new THREE.SphereGeometry(0.5, 12, 8), piel);
+      aleta.scale.set(0.26, 0.05, largo);
       aleta.position.z = (largo / 2) * z;
       aleta.rotation.y = -0.35 * z;
       pivote.add(aleta);
@@ -227,11 +270,16 @@
       });
     }
     const POR = 4, N = CARDUMENES.length * POR;
-    const peces = new THREE.InstancedMesh(geoPez(), new THREE.MeshLambertMaterial({ side: THREE.DoubleSide, emissive: 0x0d3035 }), N);
+    const uPez = { uT: { value: 0 } };
+    const gPez = geoPez();
+    const fases = new Float32Array(N);
+    for (let i = 0; i < N; i++) fases[i] = rnd() * TAU;
+    gPez.setAttribute("aFase", new THREE.InstancedBufferAttribute(fases, 1));
+    const peces = new THREE.InstancedMesh(gPez, new THREE.ShaderMaterial({ uniforms: uPez, vertexShader: VERT_PEZ, fragmentShader: FRAG_PEZ, side: THREE.DoubleSide, transparent: true }), N);
     const datosPez = [];
     for (let i = 0; i < N; i++) {
       const c = CARDUMENES[Math.floor(i / POR)];
-      datosPez.push({ c, ox: (rnd() - 0.5) * 1.6, oy: (rnd() - 0.5) * 0.3, oz: (rnd() - 0.5) * 1.0, f: c.f + rnd() * 0.5, e: 0.9 + rnd() * 0.5, hx: 0, hz: 0 });
+      datosPez.push({ c, ox: (rnd() - 0.5) * 1.6, oy: (rnd() - 0.5) * 0.3, oz: (rnd() - 0.5) * 1.0, f: c.f + rnd() * 0.5, e: 0.75 + rnd() * 0.45, hx: 0, hz: 0 });
       peces.setColorAt(i, new THREE.Color(c.color).offsetHSL((rnd() - 0.5) * 0.05, 0, (rnd() - 0.5) * 0.12));
     }
     escena.add(peces);
@@ -290,6 +338,7 @@
       u.uFuerza.value += (fuerza - u.uFuerza.value) * 0.04;
       const rx = u.uRaton.value.x, rz = u.uRaton.value.y, miedo = u.uFuerza.value;
 
+      uPez.uT.value = s;
       datosPez.forEach((p, i) => {
         const c = p.c, tt = s * c.w + p.f;
         const x = c.cx + c.ax * Math.sin(tt) + p.ox + Math.sin(s * 1.3 + p.f) * 0.15;
@@ -300,7 +349,7 @@
         p.hx += ((vx / dist) * empuje - p.hx) * 0.06;
         p.hz += ((vz / dist) * empuje - p.hz) * 0.06;
         d.position.set(x + p.hx, c.y + p.oy + Math.sin(s * 2 + p.f) * 0.05, z + p.hz);
-        d.rotation.set(0, Math.atan2(-dz, dx) + Math.sin(s * 9 + p.f) * 0.14, 0);
+        d.rotation.set(0, Math.atan2(-dz, dx) + Math.sin(s * 3 + p.f) * 0.08, 0);
         d.scale.setScalar(p.e);
         d.updateMatrix();
         peces.setMatrixAt(i, d.matrix);
@@ -627,263 +676,147 @@
   }
 
   // ==================================================================== ola
-  // Cada destino es una ola de mar: su altura en cada mes es la gente esperada.
-  // Encima: boyas de color por mes, bandera en el mes elegido, un surfista que
-  // recorre la ola del destino elegido, delfines que saltan y gaviotas.
-  const VERT_OLA = `
-    uniform float uT; uniform float uAlto;
-    attribute float aCresta; attribute vec3 aColor;
-    varying float vV; varying float vCresta; varying vec3 vN; varying vec3 vW; varying vec3 vCol;
+  const VERT_CRESTA = `
+    uniform float uEscala; uniform float uReflejo;
+    varying vec3 vN; varying vec3 vW; varying float vY;
     void main() {
-      vec3 p = position;
-      float r = sin(p.x * 2.4 + uT * 1.6) * 0.035 + sin(p.x * 5.3 - uT * 2.3 + p.z * 3.0) * 0.018;
-      p.y += r * (0.4 + aCresta);
-      p.z += sin(p.x * 0.9 + uT * 0.8) * 0.06 * aCresta;
-      vV = clamp(p.y / uAlto, 0.0, 1.0);
-      vCresta = aCresta;
-      vCol = aColor;
-      vec4 w = modelMatrix * vec4(p, 1.0);
+      vY = position.y;
+      vec4 w = modelMatrix * vec4(position, 1.0);
       vW = w.xyz;
       vN = normalize(mat3(modelMatrix) * normal);
       gl_Position = projectionMatrix * viewMatrix * w;
     }`;
-  const FRAG_OLA = `
-    uniform float uT; uniform float uAtenuar; uniform vec3 uCam;
-    varying float vV; varying float vCresta; varying vec3 vN; varying vec3 vW; varying vec3 vCol;
-    float ruido(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
-    float suave(vec2 p) {
-      vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
-      return mix(mix(ruido(i), ruido(i + vec2(1, 0)), f.x), mix(ruido(i + vec2(0, 1)), ruido(i + vec2(1, 1)), f.x), f.y);
+  const FRAG_CRESTA = `
+    uniform float uT; uniform float uAtenuar; uniform float uReflejo; uniform float uAlto; uniform vec3 uCam;
+    varying vec3 vN; varying vec3 vW; varying float vY;
+    vec3 tramo(float v) {
+      vec3 a = vec3(0.30, 0.92, 0.84), b = vec3(0.10, 0.66, 0.76), c = vec3(1.0, 0.70, 0.30), d = vec3(1.0, 0.30, 0.22);
+      vec3 col = mix(a, b, smoothstep(0.15, 0.45, v));
+      col = mix(col, c, smoothstep(0.45, 0.72, v));
+      return mix(col, d, smoothstep(0.72, 0.95, v));
     }
     void main() {
+      float v = clamp(vY / uAlto, 0.0, 1.0);
       vec3 N = normalize(vN);
       if (!gl_FrontFacing) N = -N;
       vec3 V = normalize(uCam - vW);
-      vec3 L = normalize(vec3(-0.3, 0.8, 0.6));
-      vec3 hondo = vec3(0.03, 0.33, 0.42), medio = vec3(0.07, 0.62, 0.68), claro = vec3(0.48, 0.90, 0.86);
-      vec3 col = mix(hondo, medio, smoothstep(0.0, 0.45, vV));
-      col = mix(col, claro, smoothstep(0.35, 0.95, vV) * (0.5 + 0.5 * vCresta));
-      float dif = 0.62 + 0.38 * max(dot(N, L), 0.0);
-      col *= dif;
-      float trans = pow(max(dot(-L, V), 0.0), 3.0) * smoothstep(0.3, 1.0, vV) * 0.35;
-      col += vec3(0.4, 1.0, 0.85) * trans;
-      float fres = pow(1.0 - abs(dot(N, V)), 3.0);
-      col = mix(col, vec3(0.85, 0.97, 0.97), fres * 0.35);
-      vec3 H = normalize(L + V);
-      col += vec3(1.0) * pow(max(dot(N, H), 0.0), 60.0) * 0.35;
-      float n = suave(vec2(vW.x * 5.0 - uT * 0.6, vW.z * 5.0 + uT * 0.3)) * 0.6 + suave(vec2(vW.x * 13.0 + uT, vW.y * 11.0)) * 0.4;
-      float espuma = smoothstep(0.78, 0.98, vCresta + n * 0.25) * smoothstep(0.15, 0.4, vV);
-      col = mix(col, vec3(0.98, 1.0, 1.0), espuma * 0.9);
-      float linea = smoothstep(0.9, 1.0, vCresta) * smoothstep(0.1, 0.3, vV);
-      col = mix(col, vCol, linea * 0.55);
-      col = mix(vec3(0.72, 0.82, 0.84), col, uAtenuar);
-      gl_FragColor = vec4(col, 1.0);
-    }`;
-  const FRAG_MAR = `
-    uniform float uT; varying vec3 vW;
-    void main() {
-      float d = length(vW.xz * vec2(0.8, 1.0));
-      vec3 cerca = vec3(0.06, 0.52, 0.60), lejos = vec3(0.62, 0.86, 0.88);
-      vec3 col = mix(cerca, lejos, smoothstep(6.0, 28.0, d));
-      float o = sin(vW.x * 1.7 + uT * 1.1 + sin(vW.z * 1.3 + uT * 0.7)) * sin(vW.z * 2.3 - uT * 0.9);
-      col += vec3(0.8, 1.0, 1.0) * pow(max(o, 0.0), 8.0) * 0.28 * (1.0 - smoothstep(4.0, 20.0, d));
-      float alfa = 1.0 - smoothstep(18.0, 30.0, d);
+      vec3 L = normalize(vec3(-0.4, 0.9, 0.6));
+      float dif = 0.55 + 0.45 * max(dot(N, L), 0.0);
+      float fres = pow(1.0 - abs(dot(N, V)), 2.4);
+      vec3 base = tramo(v);
+      vec3 col = base * dif;
+      col += vec3(0.55, 1.0, 0.95) * fres * 0.75;
+      float cresta = smoothstep(0.8, 1.0, N.y) * smoothstep(0.25, 0.9, v);
+      col += base * cresta * 0.9;
+      float banda = pow(0.5 + 0.5 * sin(vW.x * 1.6 - uT * 1.8 + vW.z * 0.8), 14.0);
+      col += vec3(1.0) * banda * 0.35 * v;
+      col *= uAtenuar;
+      float alfa = 1.0;
+      if (uReflejo > 0.5) {
+        alfa = 0.28 * (1.0 - smoothstep(0.0, 0.8, v));
+        col *= 0.8;
+      }
       gl_FragColor = vec4(col, alfa);
     }`;
-
-  function spline(valores) {
-    const n = valores.length;
-    return (t) => {
-      const i = Math.max(0, Math.min(n - 1.0001, t)), k = Math.floor(i), f = i - k;
-      const p0 = valores[Math.max(0, k - 1)], p1 = valores[k], p2 = valores[Math.min(n - 1, k + 1)], p3 = valores[Math.min(n - 1, k + 2)];
-      return 0.5 * (2 * p1 + (-p0 + p2) * f + (2 * p0 - 5 * p1 + 4 * p2 - p3) * f * f + (-p0 + 3 * p1 - 3 * p2 + p3) * f * f * f);
-    };
-  }
-  // perfil transversal de una ola: sube por detrás, cresta y cara empinada al frente
-  const PROF = 3.0, CRESTA_U = 0.62;
-  function perfil(u) {
-    if (u <= CRESTA_U) { const a = u / CRESTA_U; return a * a * (3 - 2 * a); }
-    const b = (u - CRESTA_U) / (1 - CRESTA_U);
-    return Math.max(0, 1 - Math.pow(b, 0.7));
-  }
-  function colorNivel(v) {
-    const tr = [[45, 0x2bc4b3], [62, 0x1fa4ae], [76, 0xf2a541], [86, 0xe5472d]];
-    let c = new THREE.Color(tr[0][1]);
-    for (let i = 1; i < tr.length; i++) if (v > tr[i - 1][0]) c = new THREE.Color(tr[i - 1][1]).lerp(new THREE.Color(tr[i][1]), Math.min(1, (v - tr[i - 1][0]) / (tr[i][0] - tr[i - 1][0])));
-    return c;
-  }
-
-  function surfista() {
-    const g = new THREE.Group();
-    const tabla = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 8), new THREE.MeshStandardMaterial({ color: 0xff7a45, roughness: 0.4 }));
-    tabla.scale.set(1, 0.07, 0.24);
-    g.add(tabla);
-    const franja = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.02, 0.03), new THREE.MeshStandardMaterial({ color: 0xffffff }));
-    franja.position.y = 0.035;
-    g.add(franja);
-    const piel = new THREE.MeshStandardMaterial({ color: 0xc98b5e, roughness: 0.7 });
-    const traje = new THREE.MeshStandardMaterial({ color: 0x0b3440, roughness: 0.6 });
-    const cuerpo = new THREE.Group();
-    cuerpo.position.y = 0.05;
-    const piernaA = new THREE.Mesh(new THREE.CapsuleGeometry(0.045, 0.22, 3, 6), traje);
-    piernaA.position.set(-0.12, 0.14, 0); piernaA.rotation.z = 0.35;
-    const piernaB = piernaA.clone(); piernaB.position.x = 0.12; piernaB.rotation.z = -0.35;
-    const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.075, 0.22, 3, 8), traje);
-    torso.position.set(0.02, 0.43, 0); torso.rotation.z = -0.25;
-    const cabeza = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 8), piel);
-    cabeza.position.set(0.1, 0.65, 0);
-    const pelo = new THREE.Mesh(new THREE.SphereGeometry(0.072, 10, 6, 0, TAU, 0, 1.4), new THREE.MeshStandardMaterial({ color: 0x3a2412 }));
-    pelo.position.copy(cabeza.position);
-    const brazoA = new THREE.Mesh(new THREE.CapsuleGeometry(0.03, 0.26, 3, 6), piel);
-    brazoA.position.set(-0.2, 0.5, 0); brazoA.rotation.z = 1.25;
-    const brazoB = brazoA.clone(); brazoB.position.x = 0.24; brazoB.rotation.z = -1.1;
-    cuerpo.add(piernaA, piernaB, torso, cabeza, pelo, brazoA, brazoB);
-    g.add(cuerpo);
-    g.userData.cuerpo = cuerpo;
-    return g;
-  }
-
-  function delfin() {
-    const g = new THREE.Group();
-    const piel = new THREE.MeshStandardMaterial({ color: 0x6f8fa3, roughness: 0.45 });
-    const panza = new THREE.MeshStandardMaterial({ color: 0xe6eef0, roughness: 0.5 });
-    const cuerpo = new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 10), piel);
-    cuerpo.scale.set(1.6, 0.42, 0.42);
-    const vientre = new THREE.Mesh(new THREE.SphereGeometry(0.33, 12, 8), panza);
-    vientre.scale.set(1.4, 0.3, 0.36); vientre.position.y = -0.05;
-    const hocico = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.25, 8), piel);
-    hocico.rotation.z = -Math.PI / 2; hocico.position.x = 0.64;
-    const aleta = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.26, 4), piel);
-    aleta.position.set(-0.05, 0.2, 0); aleta.rotation.z = 0.5;
-    const cola = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.02, 0.42), piel);
-    cola.position.set(-0.62, 0, 0);
-    g.add(cuerpo, vientre, hocico, aleta, cola);
-    return g;
-  }
-
-  function gaviota() {
-    const g = new THREE.Group();
-    const mat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
-    const ala = (s) => {
-      const piv = new THREE.Group();
-      const m = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.12), mat);
-      m.position.x = 0.25 * s;
-      piv.add(m);
-      piv.rotation.x = -Math.PI / 2;
-      g.add(piv);
-      return piv;
-    };
-    g.userData.alas = [ala(1), ala(-1)];
-    const cuerpo = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), new THREE.MeshBasicMaterial({ color: 0xf2f2f2 }));
-    cuerpo.scale.set(1, 0.8, 2.2);
-    g.add(cuerpo);
-    return g;
-  }
+  const FRAG_PISO = `
+    uniform float uT; uniform float uDx; uniform float uX0; varying vec3 vW;
+    void main() {
+      float mes = abs(fract((vW.x - uX0) / uDx + 0.5) - 0.5) * uDx;
+      float lineaX = 1.0 - smoothstep(0.0, 0.03, mes);
+      float lineaZ = 1.0 - smoothstep(0.0, 0.03, abs(fract(vW.z / 1.55 + 0.5) - 0.5) * 1.55);
+      float lejos = smoothstep(14.0, 4.0, length(vW.xz));
+      vec3 col = vec3(0.02, 0.14, 0.17);
+      col += vec3(0.35, 0.95, 0.9) * (lineaX * 0.22 + lineaZ * 0.08) * lejos;
+      col += vec3(0.2, 0.7, 0.75) * 0.05 * (0.5 + 0.5 * sin(length(vW.xz) * 1.5 - uT * 1.2)) * lejos;
+      gl_FragColor = vec4(col, 0.78 * lejos + 0.1);
+    }`;
+  const FRAG_HAZ = `
+    uniform vec3 uColor; uniform float uT; uniform float uFuerza; varying vec2 vUv;
+    void main() {
+      float borde = pow(1.0 - abs(vUv.x - 0.5) * 2.0, 1.5);
+      float alto = pow(1.0 - vUv.y, 1.6);
+      float pulso = 0.8 + 0.2 * sin(uT * 3.0);
+      gl_FragColor = vec4(uColor * borde * alto * pulso * uFuerza, 1.0);
+    }`;
 
   function ola(host, datos, alElegir, alPasar) {
-    const b = base(host, { fov: 30, pixelRatio: 1.5 });
+    const FONDO = 0x05242b;
+    const b = base(host, { fov: 30, fondo: FONDO, pixelRatio: 1.5 });
     const { escena, camara } = b;
+    b.conBrillo(0.55, 0.5, 0.74);
     const { series, periodos } = datos;
     const N = periodos.length, S = series.length;
-    const ANCHO = 17, dx = ANCHO / (N - 1), x0 = -ANCHO / 2, SEP = 3.3, ALTO = 3.8;
-    const altura = (v) => 0.25 + Math.max(0, v - 30) / 55 * (ALTO - 0.25);
-    const uT = { value: 0 }, uCam = { value: new THREE.Vector3() };
+    const ANCHO = 17, dx = ANCHO / (N - 1), x0 = -ANCHO / 2, SEP = 3.1, ALTO = 4.6;
+    const altura = (v) => 0.2 + Math.max(0, v - 30) / 55 * (ALTO - 0.2);
+    const uT = { value: 0 };
+    const uCam = { value: new THREE.Vector3() };
 
-    escena.add(new THREE.HemisphereLight(0xffffff, 0x2a8a90, 0.9));
-    const sol = new THREE.DirectionalLight(0xfff1dc, 0.9);
-    sol.position.set(-4, 10, 8);
-    escena.add(sol);
-
-    const gMar = new THREE.PlaneGeometry(80, 60, 1, 1);
-    gMar.rotateX(-Math.PI / 2);
-    const mar = new THREE.Mesh(gMar, new THREE.ShaderMaterial({
-      uniforms: { uT }, transparent: true, depthWrite: false,
+    const suelo = new THREE.PlaneGeometry(40, 30);
+    suelo.rotateX(-Math.PI / 2);
+    const piso = new THREE.Mesh(suelo, new THREE.ShaderMaterial({
+      uniforms: { uT, uDx: { value: dx }, uX0: { value: x0 } }, transparent: true, depthWrite: false,
       vertexShader: "varying vec3 vW; void main(){ vec4 w = modelMatrix*vec4(position,1.0); vW = w.xyz; gl_Position = projectionMatrix*viewMatrix*w; }",
-      fragmentShader: FRAG_MAR,
+      fragmentShader: FRAG_PISO,
     }));
-    mar.position.y = 0.01;
-    mar.renderOrder = -1;
-    escena.add(mar);
+    piso.renderOrder = 1;
+    escena.add(piso);
 
-    const SEGX = N * 10, SEGZ = 28;
-    const olas = series.map((serie, j) => {
-      const zc = (j - (S - 1) / 2) * -SEP;
-      const h = spline(serie.valores.map(altura));
-      const cv = spline(serie.valores);
-      const pos = [], cresta = [], color = [], idx = [];
-      for (let iz = 0; iz <= SEGZ; iz++) {
-        const u = iz / SEGZ;
-        for (let ix = 0; ix <= SEGX; ix++) {
-          const t = (ix / SEGX) * (N - 1);
-          const x = x0 - 0.8 + (ix / SEGX) * (ANCHO + 1.6);
-          const tt = ((x - x0) / dx);
-          const borde = Math.min(1, Math.max(0, Math.min(tt + 0.8, N - 1 + 0.8 - tt) / 0.8));
-          const alto = h(Math.max(0, Math.min(N - 1, tt))) * (0.2 + 0.8 * borde);
-          const pr = perfil(u);
-          const lip = u > CRESTA_U ? Math.sin((u - CRESTA_U) / (1 - CRESTA_U) * Math.PI) * 0.22 * (alto / ALTO) : 0;
-          pos.push(x, alto * pr, zc - PROF / 2 + u * PROF + lip);
-          cresta.push(pr);
-          const c = colorNivel(cv(Math.max(0, Math.min(N - 1, tt))));
-          color.push(c.r, c.g, c.b);
-        }
-      }
-      const fila = SEGX + 1;
-      for (let iz = 0; iz < SEGZ; iz++) for (let ix = 0; ix < SEGX; ix++) {
-        const a = iz * fila + ix, b2 = a + 1, c = a + fila, d = c + 1;
-        idx.push(a, c, b2, b2, c, d);
-      }
-      const g = new THREE.BufferGeometry();
-      g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
-      g.setAttribute("aCresta", new THREE.Float32BufferAttribute(cresta, 1));
-      g.setAttribute("aColor", new THREE.Float32BufferAttribute(color, 3));
-      g.setIndex(idx);
-      g.computeVertexNormals();
-      const u = { uT, uCam, uAlto: { value: ALTO }, uAtenuar: { value: 1 } };
-      const m = new THREE.Mesh(g, new THREE.ShaderMaterial({ uniforms: u, vertexShader: VERT_OLA, fragmentShader: FRAG_OLA, side: THREE.DoubleSide }));
-      m.scale.y = 0.001;
-      escena.add(m);
-      const yEn = (x, uu) => h(Math.max(0, Math.min(N - 1, (x - x0) / dx))) * perfil(uu);
-      return { m, u, id: serie.id, zc, yEn, cv, altoFin: h(N - 1) };
+    const crestas = [];
+    series.forEach((serie, j) => {
+      const z = (j - (S - 1) / 2) * -SEP;
+      const pts = serie.valores.map((v, i) => new THREE.Vector2(x0 + i * dx, altura(v)));
+      const curva = new THREE.SplineCurve(pts);
+      const forma = new THREE.Shape();
+      forma.moveTo(x0, 0);
+      curva.getPoints(N * 14).forEach((p) => forma.lineTo(p.x, p.y));
+      forma.lineTo(x0 + ANCHO, 0);
+      forma.lineTo(x0, 0);
+      const geo = new THREE.ExtrudeGeometry(forma, { depth: 0.5, bevelEnabled: true, bevelThickness: 0.1, bevelSize: 0.08, bevelSegments: 4, curveSegments: 4 });
+      geo.translate(0, 0, -0.25);
+      geo.computeVertexNormals();
+      const hacer = (reflejo) => {
+        const u = { uT, uCam, uAtenuar: { value: 1 }, uReflejo: { value: reflejo ? 1 : 0 }, uAlto: { value: ALTO }, uEscala: { value: 1 } };
+        const m = new THREE.Mesh(geo, new THREE.ShaderMaterial({ uniforms: u, vertexShader: VERT_CRESTA, fragmentShader: FRAG_CRESTA, transparent: reflejo, depthWrite: !reflejo, side: THREE.DoubleSide }));
+        m.position.z = z;
+        m.scale.y = reflejo ? -0.001 : 0.001;
+        m.renderOrder = reflejo ? 0 : 2;
+        escena.add(m);
+        return m;
+      };
+      crestas.push({ m: hacer(false), r: hacer(true), z, id: serie.id, altoFin: altura(serie.valores[N - 1]) });
     });
 
-    // boyas por mes
-    const gBoya = new THREE.SphereGeometry(0.11, 12, 10);
-    const boyas = new THREE.InstancedMesh(gBoya, new THREE.MeshStandardMaterial({ roughness: 0.35 }), N * S);
-    const infoBoya = [];
-    olas.forEach((o, j) => {
-      for (let i = 0; i < N; i++) {
-        infoBoya.push({ j, i, x: x0 + i * dx });
-        boyas.setColorAt(j * N + i, colorNivel(series[j].valores[i]));
+    // chispas
+    const NP = 700;
+    const pos = new Float32Array(NP * 3), sem = [];
+    for (let i = 0; i < NP; i++) sem.push([x0 - 1 + Math.random() * (ANCHO + 2), Math.random() * 6.5, (Math.random() - 0.5) * SEP * S * 1.3, 0.2 + Math.random() * 0.5]);
+    const gChispas = new THREE.BufferGeometry();
+    gChispas.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    const chispas = new THREE.Points(gChispas, new THREE.PointsMaterial({ size: 0.09, map: texturaPunto(), color: 0xa9fff3, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending }));
+    escena.add(chispas);
+
+    // haces de luz (mes elegido y mes bajo el cursor)
+    const gHaz = new THREE.PlaneGeometry(0.9, 9, 1, 1);
+    gHaz.translate(0, 4.5, 0);
+    const haz = (color, fuerza) => {
+      const u = { uColor: { value: new THREE.Color(color) }, uT, uFuerza: { value: fuerza } };
+      const g = new THREE.Group();
+      for (let k = 0; k < 3; k++) {
+        const p = new THREE.Mesh(gHaz, new THREE.ShaderMaterial({ uniforms: u, vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }", fragmentShader: FRAG_HAZ, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }));
+        p.rotation.y = (k / 3) * Math.PI;
+        g.add(p);
       }
-    });
-    escena.add(boyas);
-
-    // bandera del mes elegido
-    const bandera = new THREE.Group();
-    const asta = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.1, 6), new THREE.MeshStandardMaterial({ color: 0xf3eee3 }));
-    asta.position.y = 0.55;
-    const tela = new THREE.Mesh(new THREE.PlaneGeometry(0.55, 0.32, 8, 1), new THREE.MeshStandardMaterial({ color: 0xe5472d, side: THREE.DoubleSide }));
-    tela.position.set(0.28, 0.92, 0);
-    bandera.add(asta, tela);
-    bandera.visible = false;
-    escena.add(bandera);
-    const telaBase = tela.geometry.attributes.position.array.slice();
-    let iElegido = -1, iHover = -1, destacado = null;
-
-    const tabla = surfista();
-    tabla.scale.setScalar(0.9);
-    escena.add(tabla);
-    const delfines = [0, 1, 2].map((k) => ({ g: delfin(), x0: -6 + k * 5.5, fase: k * 1.7, z: (S - 1) / 2 * SEP + 2.2 + k * 0.5 }));
-    delfines.forEach((d) => escena.add(d.g));
-    const aros = delfines.map(() => {
-      const a = new THREE.Mesh(new THREE.RingGeometry(0.2, 0.3, 32), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, depthWrite: false }));
-      a.rotation.x = -Math.PI / 2;
-      a.position.y = 0.03;
-      escena.add(a);
-      return a;
-    });
-    const gaviotas = [0, 1, 2, 3].map((k) => ({ g: gaviota(), f: k * 1.9, r: 5 + k * 1.3, y: 5.2 + k * 0.35 }));
-    gaviotas.forEach((q) => escena.add(q.g));
+      const anillo = new THREE.Mesh(new THREE.RingGeometry(0.35, 0.5, 40), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: fuerza, blending: THREE.AdditiveBlending, depthWrite: false }));
+      anillo.rotation.x = -Math.PI / 2;
+      anillo.position.y = 0.02;
+      g.add(anillo);
+      g.userData.anillo = anillo;
+      g.visible = false;
+      escena.add(g);
+      return g;
+    };
+    const hazElegido = haz(0xff6a4d, 1.0);
+    const hazHover = haz(0xbffcff, 0.55);
 
     // etiquetas HTML
     const capa = document.createElement("div");
@@ -891,7 +824,8 @@
     host.appendChild(capa);
     const etMeses = periodos.map((p) => {
       const e = document.createElement("span");
-      e.className = "ola-mes" + (+p.slice(5) === 1 ? " anio" : "");
+      const m = +p.slice(5);
+      e.className = "ola-mes" + (m === 1 ? " anio" : "");
       e.dataset.periodo = p;
       capa.appendChild(e);
       return e;
@@ -904,9 +838,10 @@
       return e;
     });
 
-    let inicio = null;
+    let inicio = null, iHover = -1, destacado = null;
     const ndc = new THREE.Vector2(), ray = new THREE.Raycaster(), plano = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), punto = new THREE.Vector3();
-    const tmp = new THREE.Vector3(), raton = { x: 0, y: 0 }, d3 = new THREE.Object3D();
+    const tmp = new THREE.Vector3();
+    const raton = { x: 0, y: 0 };
     function indice(e) {
       const r = host.getBoundingClientRect();
       ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
@@ -914,108 +849,63 @@
       ray.setFromCamera(ndc, camara);
       if (!ray.ray.intersectPlane(plano, punto)) return -1;
       const i = Math.round((punto.x - x0) / dx);
-      return i >= 0 && i < N && punto.y > -2 && punto.y < 7 ? i : -1;
+      return i >= 0 && i < N && punto.y > -1.5 && punto.y < 7 ? i : -1;
     }
     host.addEventListener("pointermove", (e) => {
-      iHover = indice(e);
-      host.style.cursor = iHover >= 0 ? "pointer" : "default";
+      const i = indice(e);
+      if (i !== iHover) { iHover = i; hazHover.visible = i >= 0; if (i >= 0) hazHover.position.x = x0 + i * dx; }
+      host.style.cursor = i >= 0 ? "pointer" : "default";
       const r = host.getBoundingClientRect();
-      alPasar && alPasar(iHover >= 0 ? periodos[iHover] : null, e.clientX - r.left, e.clientY - r.top);
+      alPasar && alPasar(i >= 0 ? periodos[i] : null, e.clientX - r.left, e.clientY - r.top);
       b.pedir();
     });
-    host.addEventListener("pointerleave", () => { iHover = -1; alPasar && alPasar(null); });
+    host.addEventListener("pointerleave", () => { iHover = -1; hazHover.visible = false; alPasar && alPasar(null); b.pedir(); });
     host.addEventListener("click", (e) => { const i = indice(e); if (i >= 0) alElegir(periodos[i]); });
-
-    const lane = () => olas.find((o) => o.id === destacado) || olas[0];
 
     b.cadaCuadro((s) => {
       uT.value = s;
       if (inicio === null) inicio = s;
-      const crece = (j) => (REDUCIDO ? 1 : Math.min(1, Math.max(0, (s - inicio - j * 0.25) / 1.6)));
-      olas.forEach((o, j) => {
-        const k = crece(j);
-        o.m.scale.y = Math.max(0.001, 1 - Math.pow(1 - k, 3)) * (1 + Math.sin(s * 0.9 + j) * 0.02);
-        const meta = destacado === null || destacado === o.id ? 1 : 0.55;
-        o.u.uAtenuar.value += (meta - o.u.uAtenuar.value) * 0.08;
+      crestas.forEach((c, j) => {
+        const k = REDUCIDO ? 1 : Math.min(1, Math.max(0, (s - inicio - j * 0.25) / 1.8));
+        const e = 1 - Math.pow(1 - k, 3) + (k < 1 ? 0 : Math.sin(s * 0.8 + j) * 0.015);
+        c.m.scale.y = Math.max(0.001, e);
+        c.r.scale.y = -Math.max(0.001, e);
+        const meta = destacado === null || destacado === c.id ? 1 : 0.4;
+        const u = c.m.material.uniforms.uAtenuar;
+        u.value += (meta - u.value) * 0.08;
+        c.r.material.uniforms.uAtenuar.value = u.value;
       });
-
-      infoBoya.forEach((q, n) => {
-        const o = olas[q.j], esc = o.m.scale.y;
-        const grande = q.i === iHover ? 1.9 : q.i === iElegido && o === lane() ? 1.5 : 1;
-        d3.position.set(q.x, o.yEn(q.x, CRESTA_U) * esc + 0.1 + Math.sin(s * 2 + q.i) * 0.03, o.zc - PROF / 2 + CRESTA_U * PROF);
-        d3.rotation.set(0, 0, 0);
-        d3.scale.setScalar(grande * Math.min(1, esc * 1.4));
-        d3.updateMatrix();
-        boyas.setMatrixAt(n, d3.matrix);
-      });
-      boyas.instanceMatrix.needsUpdate = true;
-
-      const L = lane();
-      if (iElegido >= 0) {
-        const x = x0 + iElegido * dx;
-        bandera.visible = true;
-        bandera.position.set(x, L.yEn(x, CRESTA_U) * L.m.scale.y + 0.08, L.zc - PROF / 2 + CRESTA_U * PROF);
-        const pa = tela.geometry.attributes.position;
-        for (let v = 0; v < pa.count; v++) {
-          const bx = telaBase[v * 3];
-          pa.setZ(v, Math.sin(bx * 9 - s * 6) * 0.05 * (bx + 0.28));
-        }
-        pa.needsUpdate = true;
+      const aparece = REDUCIDO ? 1 : Math.min(1, (s - inicio) / 2.5);
+      chispas.material.opacity = 0.85 * aparece;
+      for (let i = 0; i < NP; i++) {
+        const q = sem[i];
+        pos[i * 3] = q[0] + Math.sin(s * 0.3 + i) * 0.15;
+        pos[i * 3 + 1] = (q[1] + s * q[3] * 0.25) % 6.5;
+        pos[i * 3 + 2] = q[2] + Math.cos(s * 0.25 + i * 1.7) * 0.15;
+      }
+      gChispas.attributes.position.needsUpdate = true;
+      for (const h of [hazElegido, hazHover]) {
+        const p = 1 + ((s * 0.8) % 1) * 1.6;
+        h.userData.anillo.scale.setScalar(p);
+        h.userData.anillo.material.opacity = (h === hazElegido ? 1 : 0.55) * (1 - ((s * 0.8) % 1));
       }
 
-      // surfista sobre la cara de la ola elegida
-      const vuelta = REDUCIDO ? 0.3 : ((s * 0.035) % 1);
-      const xs = x0 + 0.3 + vuelta * (ANCHO - 0.6);
-      const us = 0.74;
-      const ys = L.yEn(xs, us) * L.m.scale.y;
-      const pend = (L.yEn(xs + 0.1, us) - L.yEn(xs - 0.1, us)) * L.m.scale.y / 0.2;
-      tabla.position.set(xs, ys + 0.05, L.zc - PROF / 2 + us * PROF + 0.05);
-      tabla.rotation.set(-0.55 + Math.sin(s * 2.2) * 0.05, Math.sin(s * 0.9) * 0.25, Math.atan(pend) * 0.8, "YXZ");
-      tabla.userData.cuerpo.rotation.z = Math.sin(s * 1.7) * 0.12;
-      tabla.visible = L.m.scale.y > 0.5;
-
-      delfines.forEach((d, k) => {
-        const T = 5.5, c = ((s + d.fase * 2) % T) / T;
-        const salto = Math.max(0, Math.min(1, (c - 0.1) / 0.35));
-        const x = x0 + ((d.x0 + 9 + s * 0.4 + k * 3) % (ANCHO + 2)) - 1;
-        const y = Math.sin(salto * Math.PI) * 1.3 - 0.3;
-        d.g.visible = salto > 0 && salto < 1;
-        d.g.position.set(x + salto * 1.8, y, d.z);
-        d.g.rotation.set(0, 0, Math.cos(salto * Math.PI) * 0.9);
-        const a = aros[k], fin = Math.max(0, Math.min(1, (c - 0.45) / 0.35));
-        a.visible = fin > 0 && fin < 1;
-        a.position.x = x + 1.8;
-        a.position.z = d.z;
-        a.scale.setScalar(1 + fin * 3);
-        a.material.opacity = 0.8 * (1 - fin);
-      });
-
-      gaviotas.forEach((q) => {
-        const a = s * 0.12 + q.f;
-        q.g.position.set(Math.cos(a) * q.r, q.y + Math.sin(s * 0.7 + q.f) * 0.2, Math.sin(a) * q.r * 0.4 - 2);
-        q.g.rotation.y = -a;
-        const bat = Math.sin(s * 7 + q.f) * 0.5;
-        q.g.userData.alas[0].rotation.z = bat;
-        q.g.userData.alas[1].rotation.z = -bat;
-      });
-
       const lejos = Math.max(1, 1.3 / camara.aspect);
-      camara.position.x += ((raton.x * 1.4 + Math.sin(s * 0.12) * 0.6) - camara.position.x) * 0.04;
-      camara.position.y += ((6.6 * lejos + raton.y * 0.7) - camara.position.y) * 0.04;
-      camara.position.z = 18 * lejos;
-      camara.lookAt(0, 1.2, 0);
+      camara.position.x += ((raton.x * 1.6 + Math.sin(s * 0.12) * 0.8) - camara.position.x) * 0.04;
+      camara.position.y += ((8.2 * lejos + raton.y * 0.8) - camara.position.y) * 0.04;
+      camara.position.z = 19.5 * lejos;
+      camara.lookAt(0, 1.4, 0);
       uCam.value.copy(camara.position);
 
-      const w = host.clientWidth, hh = host.clientHeight;
+      const w = host.clientWidth, h = host.clientHeight;
       etMeses.forEach((e, i) => {
-        tmp.set(x0 + i * dx, 0, (S - 1) / 2 * SEP + PROF / 2 + 0.5).project(camara);
-        e.style.transform = `translate(${(tmp.x * 0.5 + 0.5) * w}px, ${(-tmp.y * 0.5 + 0.5) * hh}px) translate(-50%, 0)`;
-        e.classList.toggle("hover", i === iHover);
+        tmp.set(x0 + i * dx, 0, (S - 1) / 2 * SEP + 1.3).project(camara);
+        e.style.transform = `translate(${(tmp.x * 0.5 + 0.5) * w}px, ${(-tmp.y * 0.5 + 0.5) * h}px) translate(-50%, 0)`;
       });
-      olas.forEach((o, j) => {
-        tmp.set(x0 + 0.4, o.yEn(x0 + 0.4, CRESTA_U) * o.m.scale.y + 0.45, o.zc - PROF / 2 + CRESTA_U * PROF).project(camara);
-        etDest[j].style.transform = `translate(${(tmp.x * 0.5 + 0.5) * w}px, ${(-tmp.y * 0.5 + 0.5) * hh}px) translate(0, -100%)`;
-        etDest[j].classList.toggle("atenuado", destacado !== null && destacado !== o.id);
+      crestas.forEach((c, j) => {
+        tmp.set(x0 + ANCHO, c.altoFin * c.m.scale.y + 0.35, c.z).project(camara);
+        etDest[j].style.transform = `translate(${(tmp.x * 0.5 + 0.5) * w}px, ${(-tmp.y * 0.5 + 0.5) * h}px) translate(-100%, -100%)`;
+        etDest[j].classList.toggle("atenuado", destacado !== null && destacado !== c.id);
       });
     });
     b.pedir();
@@ -1023,9 +913,10 @@
     return {
       setEtiquetasMes(f) { etMeses.forEach((e) => { e.innerHTML = f(e.dataset.periodo); }); },
       setElegido(periodo) {
-        iElegido = periodos.indexOf(periodo);
-        bandera.visible = iElegido >= 0;
-        etMeses.forEach((e, k) => e.classList.toggle("elegido", k === iElegido));
+        const i = periodos.indexOf(periodo);
+        hazElegido.visible = i >= 0;
+        if (i >= 0) hazElegido.position.x = x0 + i * dx;
+        etMeses.forEach((e, k) => e.classList.toggle("elegido", k === i));
         b.pedir();
       },
       setDestacado(id) { destacado = id; b.pedir(); },
