@@ -323,8 +323,10 @@
         const a0 = i * paso + 0.02, a1 = (i + 1) * paso - 0.02;
         html += `<path class="gajo" d="${arco(r0, r1, a0, a1)}" fill="${COLOR[c.nivel]}" data-periodo="${p}" data-destino="${id}" style="--i:${i}"></path>`;
       });
-      const [lx, ly] = punto((r0 + rMax) / 2, -0.001);
-      html += `<text class="rueda-anillo" x="${CX + 6}" y="${CY - r0 - 6}">${NOMBRE[id]}</text>`;
+      // nombre curvado sobre la base del anillo, centrado arriba (la base siempre tiene color)
+      const rt = r0 + 11, [tx0, ty0] = punto(rt, -1.2), [tx1, ty1] = punto(rt, 1.2);
+      html += `<path id="arco-${id}" d="M${tx0} ${ty0}A${rt} ${rt} 0 0 1 ${tx1} ${ty1}" fill="none"/>
+        <text class="rueda-anillo" dominant-baseline="middle"><textPath href="#arco-${id}" startOffset="50%" text-anchor="middle">${NOMBRE[id]}</textPath></text>`;
     });
     periodos.forEach((p, i) => {
       const [x, y] = punto(356, (i + 0.5) * paso);

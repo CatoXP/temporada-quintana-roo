@@ -668,7 +668,7 @@ ol, ul { padding: 0; list-style: none; }
 .gajo.elegido { stroke: #fff; stroke-width: 3; opacity: 1; }
 .rueda-mes { font: 750 15px var(--display); fill: rgba(191, 252, 255, .75); cursor: pointer; text-transform: capitalize; }
 .rueda-mes.hover, .rueda-mes.elegido { fill: #fff; }
-.rueda-anillo { font: 700 12px var(--texto); fill: rgba(243, 245, 241, .75); letter-spacing: .06em; text-transform: uppercase; }
+.rueda-anillo { font: 800 12px var(--texto); fill: #f3f5f1; letter-spacing: .12em; text-transform: uppercase; pointer-events: none; paint-order: stroke; stroke: #06262d; stroke-width: 4px; stroke-linejoin: round; }
 .rueda-centro-fondo { fill: #05242b; stroke: rgba(139, 227, 216, .25); }
 .rueda-centro-mes { font: 760 30px var(--display); fill: #fff; letter-spacing: -.02em; }
 .rueda-centro-sub { font: 600 14px var(--texto); fill: rgba(191, 252, 255, .8); }
