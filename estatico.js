@@ -149,7 +149,7 @@
     return {
       ...base, fecha: fechaIso, dia: contextoDia(f), lugares,
       restaurantes: D.restaurantes[destino], probar: D.probar[destino],
-      mejores_meses: D.tranquilos[destino].filter((x) => x.periodo >= siguiente).slice(0, 3),
+      mejores_meses: D.tranquilos[destino].filter((x) => x.periodo >= siguiente).filter((x, i, a) => a.findIndex((y) => y.mes === x.mes) === i).slice(0, 3),
     };
   }
 

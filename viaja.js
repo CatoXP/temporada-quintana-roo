@@ -10,7 +10,7 @@
   const capital = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
   const C = window.TEMPORADA_CONTENIDO;
   const OLAS = { tranquilo: 1, moderado: 2, concurrido: 3, lleno: 4 };
-  const PREVIA = { tranquilo: 45, moderado: 67, concurrido: 80, lleno: 90 };
+  const PREVIA = { tranquilo: 45, moderado: 63, concurrido: 80, lleno: 90 };
   const AEROPUERTO = { cancun: ["CUN", "Cancún"], riviera_maya: ["TQO", "Tulum"], gran_costa_maya: ["CTM", "Chetumal"] };
   const FOTO_DESTINO = { cancun: "img/cancun.jpg", riviera_maya: "img/tulum.jpg", gran_costa_maya: "img/canal_piratas.jpg" };
   const NOMBRE = { cancun: "Cancún", riviera_maya: "Riviera Maya", gran_costa_maya: "Gran Costa Maya" };
@@ -79,7 +79,7 @@
   const creditoDe = (clave) => estado.creditos[clave];
   const foto = (clave) => (creditoDe(clave) ? `img/${creditoDe(clave).archivo}` : "");
   const fotoHTML = (f, alt) => (f ? `<img src="${esc(f.src || f)}" alt="${esc(alt)}" loading="lazy" decoding="async">` : '<div class="sin-foto"></div>');
-  const gente = (p50) => Math.max(0.02, Math.pow(Math.min(1, Math.max(0, (p50 - 38) / 48)), 1.5));
+  const gente = (p50) => Math.max(0.02, Math.pow(Math.min(1, Math.max(0, (p50 - 38) / 48)), 2.3));
   const mitad = (periodo) => { const f = `${periodo}-15`; return f < hoyIso ? hoyIso : f; };
 
   function normalizarFecha(texto) {
