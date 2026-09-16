@@ -203,7 +203,7 @@
   function animarViaje() {
     const letrero = $("#viaje-letrero"), bienvenida = $("#v-bienvenida");
     const paradas = () => $$(".parada");
-    const fases = [["mov_bus", [0, 1]], ["mov_tren", [2]], ["mov_avion", [3]], ["mov_lancha", [4]], ["mov_bienvenida", [0, 1, 2, 3, 4]]];
+    const fases = [["mov_bus", [0]], ["mov_auto", [1]], ["mov_tren", [2]], ["mov_avion", [3]], ["mov_lancha", [4]], ["mov_bienvenida", [0, 1, 2, 3, 4]]];
     let fase = -1;
     const ponerFase = (f) => {
       if (f === fase) return;
@@ -218,30 +218,31 @@
     ruta.style.strokeDasharray = `${largo}`;
     if (!hayGsap || reducido) {
       $("#v-qroo").setAttribute("opacity", 1);
-      $$("#v-bus, #v-tren, #v-avion, #v-agua").forEach((el) => el.setAttribute("opacity", 0));
+      $$("#v-bus, #v-auto, #v-tren, #v-avion, #v-agua").forEach((el) => el.setAttribute("opacity", 0));
       ruta.style.strokeDashoffset = 0;
-      ponerFase(4);
+      ponerFase(5);
       return;
     }
     ruta.style.strokeDashoffset = largo;
     const tl = gsap.timeline({ defaults: { ease: "none" }, onUpdate: () => {
       const x = tl.time();
-      ponerFase(x < 0.9 ? 0 : x < 1.8 ? 1 : x < 2.85 ? 2 : x < 4.1 ? 3 : 4);
+      ponerFase(x < 1.0 ? 0 : x < 1.95 ? 1 : x < 2.9 ? 2 : x < 3.95 ? 3 : x < 5.2 ? 4 : 5);
     } });
     tl.fromTo("#v-bus", { x: -340 }, { x: 1300, duration: 1 }, 0)
-      .fromTo("#v-tren", { x: -900 }, { x: 1300, duration: 1 }, 0.8)
-      .fromTo("#v-avion", { x: -300, y: 340, rotation: -4, transformOrigin: "50% 50%" }, { x: 1320, y: 150, rotation: -10, duration: 1.1 }, 1.7)
-      .fromTo("#v-agua", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 2.75)
-      .fromTo("#v-lancha", { x: -300, y: 0 }, { x: 1320, y: -20, duration: 1.15 }, 2.9)
-      .fromTo("#v-velero", { x: -200 }, { x: 700, duration: 1.3 }, 2.8)
-      .to("#v-paisaje", { opacity: 0, duration: 0.4 }, 4.1)
-      .to("#v-agua", { opacity: 0, duration: 0.4 }, 4.1)
-      .fromTo("#v-qroo", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 4.1)
-      .fromTo("#v-mapa", { scale: 0.45, transformOrigin: "50% 50%", rotation: -8 }, { scale: 0.84, rotation: 0, duration: 0.7, ease: "back.out(1.4)" }, 4.15)
-      .to(ruta, { strokeDashoffset: 0, duration: 0.7 }, 4.55)
-      .fromTo(".pin", { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.3, stagger: 0.08, ease: "back.out(3)" }, 4.55)
+      .fromTo("#v-auto", { x: -260 }, { x: 1300, duration: 0.85 }, 1.05)
+      .fromTo("#v-tren", { x: -900 }, { x: 1300, duration: 1 }, 1.95)
+      .fromTo("#v-avion", { x: -300, y: 340, rotation: -4, transformOrigin: "50% 50%" }, { x: 1320, y: 150, rotation: -10, duration: 1.1 }, 2.9)
+      .fromTo("#v-agua", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 3.95)
+      .fromTo("#v-lancha", { x: -300, y: 0 }, { x: 1320, y: -20, duration: 1.15 }, 4.05)
+      .fromTo("#v-velero", { x: -200 }, { x: 700, duration: 1.3 }, 3.95)
+      .to("#v-paisaje", { opacity: 0, duration: 0.4 }, 5.25)
+      .to("#v-agua", { opacity: 0, duration: 0.4 }, 5.25)
+      .fromTo("#v-qroo", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 5.25)
+      .fromTo("#v-mapa", { scale: 0.45, transformOrigin: "50% 50%", rotation: -8 }, { scale: 0.84, rotation: 0, duration: 0.7, ease: "back.out(1.4)" }, 5.3)
+      .to(ruta, { strokeDashoffset: 0, duration: 0.7 }, 5.7)
+      .fromTo(".pin", { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.3, stagger: 0.08, ease: "back.out(3)" }, 5.7)
       .to({}, { duration: 0.3 });
-    ScrollTrigger.create({ trigger: ".moverse", start: "top top", end: () => "+=" + window.innerHeight * 3.2, pin: true, scrub: 0.6, animation: tl, anticipatePin: 1 });
+    ScrollTrigger.create({ trigger: ".moverse", start: "top top", end: () => "+=" + window.innerHeight * 3.8, pin: true, scrub: 0.6, animation: tl, anticipatePin: 1 });
   }
 
   function animarMosaico() {
