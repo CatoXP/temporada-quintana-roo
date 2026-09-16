@@ -372,5 +372,215 @@
   "licencia": "CC BY 3.0",
   "autor": "Juan Ortega",
   "articulo": null
+ },
+ "comida_cochinita": {
+  "archivo": "comida_cochinita.jpg",
+  "titulo": "Cochinita_pibil_2.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Cochinita_pibil_2.jpg",
+  "licencia": "CC BY-SA 3.0",
+  "autor": "Popo le Chien",
+  "articulo": null
+ },
+ "comida_sopa_lima": {
+  "archivo": "comida_sopa_lima.jpg",
+  "titulo": "Sopa_de_lima.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Sopa_de_lima.jpg",
+  "licencia": "CC BY-SA 3.0",
+  "autor": "Aome7937",
+  "articulo": null
+ },
+ "comida_salbutes": {
+  "archivo": "comida_salbutes.jpg",
+  "titulo": "Salbutes.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Salbutes.jpg",
+  "licencia": "CC BY-SA 4.0",
+  "autor": "Isaacmz",
+  "articulo": null
+ },
+ "comida_panuchos": {
+  "archivo": "comida_panuchos.jpg",
+  "titulo": "Panucho_yucateco.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Panucho_yucateco.jpg",
+  "licencia": "CC BY-SA 3.0",
+  "autor": "Padaguan",
+  "articulo": null
+ },
+ "comida_relleno_negro": {
+  "archivo": "comida_relleno_negro.jpg",
+  "titulo": "Relleno negro del Museo de la Gastronomía 01.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Relleno_negro_del_Museo_de_la_Gastronom%C3%ADa_01.jpg",
+  "licencia": "CC BY 4.0",
+  "autor": "Wotancito",
+  "articulo": null
+ },
+ "comida_papadzules": {
+  "archivo": "comida_papadzules.jpg",
+  "titulo": "Papadzules (4072432165).jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Papadzules_(4072432165).jpg",
+  "licencia": "CC BY 2.0",
+  "autor": "kevin from south boston, ma, usa",
+  "articulo": null
+ },
+ "comida_poc_chuc": {
+  "archivo": "comida_poc_chuc.jpg",
+  "titulo": "Poc_chuc.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Poc_chuc.jpg",
+  "licencia": "CC BY 2.0",
+  "autor": "https://flickr.com/photos/scaredykat/",
+  "articulo": null
+ },
+ "comida_esquites": {
+  "archivo": "comida_esquites.jpg",
+  "titulo": "Esquites.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Esquites.jpg",
+  "licencia": "Public domain",
+  "autor": "Viritrudis",
+  "articulo": null
+ },
+ "comida_pan_cazon": {
+  "archivo": "comida_pan_cazon.jpg",
+  "titulo": "Pan de cazón.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Pan_de_caz%C3%B3n.jpg",
+  "licencia": "CC BY-SA 4.0",
+  "autor": "Wotancito",
+  "articulo": null
+ },
+ "postal_cancun": {
+  "archivo": "postal_cancun.jpg",
+  "titulo": "Turquoise water in Cancun, Mexico.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Turquoise_water_in_Cancun,_Mexico.jpg",
+  "licencia": "CC BY-SA 3.0",
+  "autor": "Paxson Woelber",
+  "articulo": null
+ },
+ "postal_isla": {
+  "archivo": "postal_isla.jpg",
+  "titulo": "Playa Norte, Isla Mujeres (42695470885).jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Playa_Norte,_Isla_Mujeres_(42695470885).jpg",
+  "licencia": "CC BY 2.0",
+  "autor": "dronepicr",
+  "articulo": null
+ },
+ "postal_playa": {
+  "archivo": "postal_playa.jpg",
+  "titulo": "Playa-del-carmen-beach.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Playa-del-carmen-beach.jpg",
+  "licencia": "CC BY-SA 4.0",
+  "autor": "Scott S Bateman",
+  "articulo": null
+ },
+ "postal_tulum": {
+  "archivo": "postal_tulum.jpg",
+  "titulo": "Playa Paraiso, Tulum QR Oct 2023.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Playa_Paraiso,_Tulum_QR_Oct_2023.jpg",
+  "licencia": "CC BY 2.0",
+  "autor": "Erik Cleves Kristensen",
+  "articulo": null
+ },
+ "postal_cenote": {
+  "archivo": "postal_cenote.jpg",
+  "titulo": "Carwash Cenote Quintana Roo Feb 2020.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Carwash_Cenote_Quintana_Roo_Feb_2020.jpg",
+  "licencia": "CC BY-SA 2.0",
+  "autor": "Bernard DUPONT",
+  "articulo": null
+ },
+ "postal_xcacel": {
+  "archivo": "postal_xcacel.jpg",
+  "titulo": "Playa Xcacel - Mexico - panoramio.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Playa_Xcacel_-_Mexico_-_panoramio.jpg",
+  "licencia": "CC BY-SA 3.0",
+  "autor": "diego_cue",
+  "articulo": null
+ },
+ "postal_bacalar": {
+  "archivo": "postal_bacalar.jpg",
+  "titulo": "Bacalar - Lagoon of Colors.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Bacalar_-_Lagoon_of_Colors.jpg",
+  "licencia": "CC BY 2.0",
+  "autor": "Roberto Bolaños",
+  "articulo": null
+ },
+ "postal_mahahual": {
+  "archivo": "postal_mahahual.jpg",
+  "titulo": "Mahahual, Quintana Roo, Mexico - panoramio (1).jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Mahahual,_Quintana_Roo,_Mexico_-_panoramio_(1).jpg",
+  "licencia": "CC BY 3.0",
+  "autor": "Juan Ortega",
+  "articulo": null
+ },
+ "postal_chetumal": {
+  "archivo": "postal_chetumal.jpg",
+  "titulo": "Chetumal Bay, Chetumal, Q. Roo, México. - panoramio.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Chetumal_Bay,_Chetumal,_Q._Roo,_M%C3%A9xico._-_panoramio.jpg",
+  "licencia": "CC BY 3.0",
+  "autor": "holachetumal",
+  "articulo": null
+ },
+ "postal_cozumel": {
+  "archivo": "postal_cozumel.jpg",
+  "titulo": "Arrecifes de Cozumel National Park.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Arrecifes_de_Cozumel_National_Park.jpg",
+  "licencia": "CC BY-SA 4.0",
+  "autor": "Matthew T Rader",
+  "articulo": null
+ },
+ "postal_atardecer": {
+  "archivo": "postal_atardecer.jpg",
+  "titulo": "Cozumel Western Shore Sunset-27527.jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:Cozumel_Western_Shore_Sunset-27527.jpg",
+  "licencia": "Public domain",
+  "autor": "Ken Thomas",
+  "articulo": null
+ },
+ "comida_tikin_xic": {
+  "archivo": "comida_tikin_xic.jpg",
+  "titulo": "-tikinXic -islaMujeres -justiciasocial gracias Geovanny (23433781070).jpg",
+  "extracto": null,
+  "coordenadas": null,
+  "fuente": "https://commons.wikimedia.org/wiki/File:-tikinXic_-islaMujeres_-justiciasocial_gracias_Geovanny_(23433781070).jpg",
+  "licencia": "CC BY 2.0",
+  "autor": "Tabi",
+  "articulo": null
  }
 }
