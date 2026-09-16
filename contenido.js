@@ -11,9 +11,9 @@ window.TEMPORADA_CONTENIDO = {
   // Fondo de la portada por destino. Tomas: fotos (Ken Burns). Para usar un video propio
   // (p. ej. generado con Higgsfield), copia el .mp4 a web/viaja/img/ y pon su nombre en `video`.
   fondos: {
-    cancun: { tomas: ["postal_cancun", "cancun", "el_rey"], video: "" },
-    riviera_maya: { tomas: ["postal_tulum", "tulum", "postal_playa", "dos_ojos"], video: "" },
-    gran_costa_maya: { tomas: ["postal_bacalar", "canal_piratas", "bacalar_manana", "mahahual_barcas"], video: "" },
+    cancun: { tomas: ["postal_cancun", "cancun", "el_rey"], video: "fondo_cancun.mp4" },
+    riviera_maya: { tomas: ["postal_tulum", "tulum", "postal_playa", "dos_ojos"], video: "fondo_riviera.mp4" },
+    gran_costa_maya: { tomas: ["postal_bacalar", "canal_piratas", "bacalar_manana", "mahahual_barcas"], video: "fondo_gcm.mp4" },
   },
 
   // ------------------------------------------------------------------ interfaz

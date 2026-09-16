@@ -313,7 +313,11 @@
     const capa = document.createElement("div");
     capa.className = "fondo-capa";
     if (cfg.video) {
-      capa.innerHTML = `<video src="img/${esc(cfg.video)}" autoplay muted loop playsinline ${reducido ? "" : ""}></video>`;
+      const poster = cfg.tomas.find(foto);
+      capa.innerHTML = `<video src="img/${esc(cfg.video)}" ${poster ? `poster="${foto(poster)}"` : ""} ${reducido ? "" : "autoplay"} muted loop playsinline preload="auto"></video>`;
+      const v = $("video", capa);
+      v.muted = true;
+      if (!reducido) v.play().catch(() => {});
     } else {
       capa.innerHTML = cfg.tomas.filter(foto).map((k, i) => `<img class="toma${i === 0 ? " activa" : ""}" src="${foto(k)}" alt="">`).join("");
       const tomas = $$(".toma", capa);
@@ -679,7 +683,6 @@
     iniciarMovimiento();
     if (hay3D) {
       try {
-        estado.escenas.agua = Escenas.agua($("#agua"));
         estado.escenas.playa = Escenas.playa($("#playa"));
       } catch (e) { console.warn("WebGL no disponible", e); }
     }
