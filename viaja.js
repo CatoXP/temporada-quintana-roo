@@ -303,8 +303,34 @@
       botonDestino.setAttribute("aria-expanded", "false");
     }));
   }
+  let fondoActual = null, relojFondo = 0;
+  function pintarFondo(id) {
+    if (fondoActual === id) return;
+    fondoActual = id;
+    const cfg = C.fondos[id];
+    const caja = $("#fondo-destino");
+    clearInterval(relojFondo);
+    const capa = document.createElement("div");
+    capa.className = "fondo-capa";
+    if (cfg.video) {
+      capa.innerHTML = `<video src="img/${esc(cfg.video)}" autoplay muted loop playsinline ${reducido ? "" : ""}></video>`;
+    } else {
+      capa.innerHTML = cfg.tomas.filter(foto).map((k, i) => `<img class="toma${i === 0 ? " activa" : ""}" src="${foto(k)}" alt="">`).join("");
+      const tomas = $$(".toma", capa);
+      let i = 0;
+      if (!reducido && tomas.length > 1) relojFondo = setInterval(() => {
+        tomas[i].classList.remove("activa");
+        i = (i + 1) % tomas.length;
+        tomas[i].classList.add("activa");
+      }, 7000);
+    }
+    caja.appendChild(capa);
+    requestAnimationFrame(() => capa.classList.add("visible"));
+    $$(".fondo-capa", caja).slice(0, -1).forEach((v) => { v.classList.remove("visible"); setTimeout(() => v.remove(), 1400); });
+  }
   function elegirDestino(id) {
     estado.destino = id;
+    if (Object.keys(estado.creditos).length) pintarFondo(id);
     $("#destino-nombre").textContent = NOMBRE[id];
     $("#destino-img").src = FOTO_DESTINO[id];
     $$("button", lista).forEach((b) => b.setAttribute("aria-selected", String(b.dataset.destino === id)));
@@ -593,10 +619,34 @@
       return `<article class="plato"><div class="plato-foto"><img src="${foto(C.platillos[id].foto)}" alt="${esc(n)}" loading="lazy">${cr ? `<a href="${esc(cr.fuente)}" target="_blank" rel="noopener">${esc(cr.autor || "")}</a>` : ""}</div><h3>${esc(n)}</h3><p>${esc(nota)}</p></article>`;
     }).join("");
     $("#donde-comer").textContent = t("donde_comer", { d: p.destino.nombre });
-    $("#restaurantes").innerHTML = p.restaurantes.map((r) => {
-      const coc = idioma === "es" ? r.cocina.map((c) => COCINA[c]).filter(Boolean).slice(0, 2).join(" · ") : "";
-      return `<li><a href="${esc(r.osm)}" target="_blank" rel="noopener">${esc(r.nombre)}</a><small>${esc(r.zona)}${coc ? " · " + esc(coc) : ""}</small></li>`;
-    }).join("");
+    const pintarRest = (zona) => {
+      $("#restaurantes").innerHTML = p.restaurantes.filter((r) => !zona || r.zona === zona).map((r) => {
+        const coc = idioma === "es" ? r.cocina.map((c) => COCINA[c]).filter(Boolean).slice(0, 2).join(" · ") : "";
+        return `<li><span class="rest-nombre">${esc(r.nombre)}</span><small>${esc(r.zona)}${coc ? " · " + esc(coc) : ""}</small>
+          <a class="resena" href="${esc(r.maps)}" target="_blank" rel="noopener">★ ${esc(t("ver_resenas"))}</a></li>`;
+      }).join("");
+    };
+    const pintarHoteles = (zona) => {
+      $("#hoteles").innerHTML = p.hoteles.filter((h) => !zona || h.zona === zona).map((h) => `<article class="hotel">
+        <span class="hotel-tipo">${esc(t("tipo_" + h.tipo))}</span>
+        <h3>${esc(h.nombre)}</h3>
+        <p>${esc(h.zona)}${h.estrellas ? ` · <span class="hotel-estrellas" title="${esc(t("estrellas_cat", { n: h.estrellas }))}">${"★".repeat(h.estrellas)}</span>` : ""}</p>
+        <div class="hotel-acciones"><a class="resena" href="${esc(h.maps)}" target="_blank" rel="noopener">★ ${esc(t("ver_resenas"))}</a>${h.web ? `<a href="${esc(h.web)}" target="_blank" rel="noopener">${esc(t("sitio_web"))} ↗</a>` : ""}</div>
+      </article>`).join("");
+      aparecer(".hotel", $("#hoteles"));
+    };
+    const chips = (cont, lista, pintar) => {
+      const zonas = [...new Set(lista.map((x) => x.zona))];
+      cont.hidden = zonas.length < 2;
+      cont.innerHTML = [["", t("todas")], ...zonas.map((z) => [z, z])].map(([v, txt], i) => `<button type="button" data-zona="${esc(v)}" class="${i === 0 ? "activa" : ""}">${esc(txt)}</button>`).join("");
+      $$("button", cont).forEach((b) => b.addEventListener("click", () => {
+        $$("button", cont).forEach((x) => x.classList.toggle("activa", x === b));
+        pintar(b.dataset.zona);
+      }));
+      pintar("");
+    };
+    chips($("#zonas-comer"), p.restaurantes, pintarRest);
+    chips($("#zonas-dormir"), p.hoteles, pintarHoteles);
 
     elegirDestino(p.destino.id);
     try { history.replaceState(null, "", `?destino=${p.destino.id}&fecha=${p.fecha}${idioma !== "es" ? "&lang=" + idioma : ""}${location.hash}`); } catch (e) { /* vista embebida */ }
@@ -652,6 +702,8 @@
         api, C, t, idioma: () => idioma, meta: () => estado.meta,
         fechaLarga, mes, nivel: nivelTxt, nombreDestino: (id) => NOMBRE[id],
         nombreLugar: (l) => lugarTxt(l)[0],
+        destinoActual: () => estado.destino,
+        vuelos: (d, f) => `https://www.google.com/travel/flights?q=${encodeURIComponent(`Flights to ${AEROPUERTO[d][0]} on ${f}`)}&hl=${idioma}`,
         planear: (d, f) => { elegirDestino(d); planear(d, f, true); },
         ir: (sel, d) => { if (d !== estado.destino) planear(d, estado.fecha, false); irA($(sel)); },
       });

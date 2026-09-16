@@ -590,3 +590,44 @@ ol, ul { padding: 0; list-style: none; }
 }
 
 .barra-vuelos { white-space: nowrap; }
+
+.viaje .zona { fill: #fff; opacity: .16; }
+.viaje .pin text { font-size: 19px; }
+
+/* zonas, reseñas y hoteles */
+.zonas { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 4px; }
+.zonas button { border: 1px solid var(--linea); background: #fff; border-radius: 999px; padding: 9px 16px; font: 700 14px/1 var(--texto); cursor: pointer; transition: background .3s, color .3s; }
+.zonas button.activa { background: var(--tinta); color: var(--cal); border-color: var(--tinta); }
+.restaurantes li { position: relative; }
+.rest-nombre { font: 700 20px/1.2 var(--display); letter-spacing: -.02em; }
+.resena { justify-self: start; display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; font: 700 13.5px/1 var(--texto) !important; color: #b45309; text-decoration: none; }
+.resena::after { content: none !important; }
+.resena:hover { text-decoration: underline; }
+.dormir { padding: clamp(90px, 11vw, 150px) var(--gutter); background: var(--cal); }
+.dormir .zonas { max-width: var(--ancho); margin: 28px auto 0; }
+.hoteles { max-width: var(--ancho); margin: 22px auto 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 14px; }
+.hotel { display: grid; gap: 8px; align-content: start; padding: 22px; border-radius: 24px; background: #fff; border: 1px solid var(--linea); transition: transform .4s var(--ease), box-shadow .4s; }
+.hotel:hover { transform: translateY(-4px); box-shadow: 0 30px 60px -40px rgba(6, 40, 48, .5); }
+.hotel-tipo { justify-self: start; padding: 5px 10px; border-radius: 999px; background: var(--cal-2); font: 700 12px/1 var(--texto); letter-spacing: .06em; text-transform: uppercase; color: var(--laguna-hondo); }
+.hotel h3 { font: 740 22px/1.1 var(--display); letter-spacing: -.02em; }
+.hotel p { color: var(--tinta-2); font-size: 15px; }
+.hotel-estrellas { color: #f2a541; letter-spacing: 2px; }
+.hotel-acciones { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 4px; }
+.hotel-acciones a { font: 700 13.5px/1 var(--texto); color: var(--laguna-hondo); text-decoration: none; }
+
+/* fondo cinematográfico por destino */
+.fondo-destino { position: absolute; inset: 0; z-index: -3; overflow: hidden; background: #0b3440; }
+.fondo-capa { position: absolute; inset: 0; opacity: 0; transition: opacity 1.4s var(--ease); }
+.fondo-capa.visible { opacity: 1; }
+.fondo-capa video, .fondo-capa img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.toma { opacity: 0; transform: scale(1.18) translate(2%, 1%); transition: opacity 2s ease, transform 9s linear; }
+.toma.activa { opacity: 1; transform: scale(1.04) translate(-1%, -1%); }
+.fondo-destino::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, rgba(243, 245, 241, .92) 0%, rgba(243, 245, 241, .74) 38%, rgba(243, 245, 241, .12) 70%, rgba(243, 245, 241, 0) 100%),
+              linear-gradient(180deg, rgba(243, 245, 241, .55) 0%, rgba(243, 245, 241, 0) 22%); }
+.portada .cielo { display: none; }
+.agua-3d { -webkit-mask-image: linear-gradient(180deg, transparent 0%, transparent 52%, #000 78%); mask-image: linear-gradient(180deg, transparent 0%, transparent 52%, #000 78%); }
+@media (max-width: 900px) {
+  .fondo-destino::after { background: linear-gradient(180deg, rgba(243, 245, 241, .82) 0%, rgba(243, 245, 241, .7) 60%, rgba(243, 245, 241, .3) 100%); }
+}
+@media (prefers-reduced-motion: reduce) { .toma { transform: none; } }

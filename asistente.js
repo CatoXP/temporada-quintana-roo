@@ -25,8 +25,8 @@
 
   const DESTINOS = [
     ["gran_costa_maya", ["bacalar", "mahahual", "chetumal", "costa maya", "chacchoben", "kohunlich", "chinchorro"]],
-    ["riviera_maya", ["riviera", "playa del carmen", "tulum", "cozumel", "akumal", "coba", "puerto morelos", "sian kaan"]],
-    ["cancun", ["cancun", "isla mujeres", "zona hotelera"]],
+    ["riviera_maya", ["riviera", "playa del carmen", "tulum", "akumal", "coba", "puerto morelos", "sian kaan"]],
+    ["cancun", ["cancun", "zona hotelera"]],
   ];
   const INTENCION = {
     saludo: ["hola", "buenas", "hi", "hello", "hey", "bonjour", "salut", "ola", "oi"],
@@ -36,6 +36,35 @@
     mejor: ["mejor", "cuando", "epoca", "tranquil", "best", "when", "quiet", "meilleur", "quand", "calme", "melhor", "quando"],
     estado: ["como estara", "como esta", "lleno", "gente", "concurrid", "crowd", "busy", "full", "people", "monde", "affluence", "cheio", "lotado", "movimento", "how is", "how will"],
   };
+
+  // ---- modelo pequeño entrenado en Python (cauce.viaja.asistente) -----------------
+  const M = window.TEMPORADA_MODELO;
+  const INDICE = M ? new Map(M.vocab.map((g, i) => [g, i])) : null;
+  function clasificar(texto) {
+    if (!M) return null;
+    const t = (texto || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9ñ ]+/g, " ").replace(/\s+/g, " ").trim();
+    const tf = new Map();
+    for (const w0 of t.split(" ").filter(Boolean)) {
+      const w = ` ${w0} `;
+      for (let n = M.ngram[0]; n <= M.ngram[1]; n++) {
+        // igual que sklearn char_wb
+        let o = 0;
+        const agregar = (g) => { const j = INDICE.get(g); if (j !== undefined) tf.set(j, (tf.get(j) || 0) + 1); };
+        agregar(w.slice(o, o + n));
+        while (o + n < w.length) { o++; agregar(w.slice(o, o + n)); }
+      }
+    }
+    let norma = 0;
+    const x = [];
+    for (const [j, c] of tf) { const v = (1 + Math.log(c)) * M.idf[j]; x.push([j, v]); norma += v * v; }
+    norma = Math.sqrt(norma) || 1;
+    const z = M.intercepto.slice();
+    for (const [j, v] of x) for (const [c, w] of M.pesos[j]) z[c] += w * (v / norma);
+    const mx = Math.max(...z), ex = z.map((v) => Math.exp(v - mx)), suma = ex.reduce((a, b) => a + b, 0);
+    let mejor = 0;
+    ex.forEach((v, i) => { if (v > ex[mejor]) mejor = i; });
+    return { id: M.clases[mejor], p: ex[mejor] / suma };
+  }
 
   function crearUI(ctx) {
     const raiz = document.createElement("div");
@@ -121,48 +150,71 @@
         if (r.en_rango) fecha = r;
       } catch (e) { /* sin fecha */ }
 
-      if (quiere.sargazo) {
+      const intent = clasificar(pregunta);
+      const seguro = !!intent && intent.p >= M.umbral;
+      const id = seguro ? intent.id : null;
+      const hablaDe = (k) => id === k || (!seguro && quiere[k]);
+      const AERO = { cancun: "Cancún (CUN)", riviera_maya: "Tulum (TQO)", gran_costa_maya: "Chetumal (CTM)" };
+
+      if (id === "vuelos") {
+        const d = destino || ctx.destinoActual();
+        const f = fecha ? fecha.fecha : proximaFecha();
+        return { texto: esc(`${ctx.t("vuelos_barra")}: ${AERO[d]} · ${ctx.fechaLarga(f)}`),
+                 accion: { texto: ctx.t("vuelos_barra"), fn: () => window.open(ctx.vuelos(d, f), "_blank", "noopener") } };
+      }
+      if (hablaDe("sargazo")) {
         const f = fecha ? fecha.fecha : proximaFecha();
         const p = await plan("gran_costa_maya", f);
         const nivel = p.sargazo && p.sargazo.nivel;
-        const m = ctx.mes(f.slice(0, 7));
-        if (fecha || !faq(t)) {
-          const clave = nivel === "alto" ? "sargazo_si" : nivel === "medio" ? "sargazo_medio" : "sargazo_no";
-          return { texto: b[clave].replace("{m}", m) };
-        }
+        const clave = nivel === "alto" ? "sargazo_si" : nivel === "medio" ? "sargazo_medio" : "sargazo_no";
+        return { texto: b[clave].replace("{m}", ctx.mes(f.slice(0, 7))) };
       }
-      if (quiere.comer && destino) {
-        const p = await plan(destino, proximaFecha());
-        const platos = C.comida[destino].map((id) => (C.platillos[id][ctx.idioma()] || C.platillos[id].es)[0]).slice(0, 3);
+      if (id === "dormir") {
+        const d = destino || ctx.destinoActual();
+        const p = await plan(d, proximaFecha());
+        const nombres = p.hoteles.slice(0, 4).map((h) => h.nombre);
+        return { texto: esc(`${ctx.t("dormir_eyebrow")} · ${ctx.nombreDestino(d)}: ${lista(nombres)}. ${ctx.t("resenas_nota").split(".")[0]}.`),
+                 accion: { texto: ctx.t("dormir_eyebrow"), fn: () => ctx.ir("#dormir", d) } };
+      }
+      if (hablaDe("comer")) {
+        const d = destino || ctx.destinoActual();
+        const p = await plan(d, proximaFecha());
+        const platos = C.comida[d].map((k) => (C.platillos[k][ctx.idioma()] || C.platillos[k].es)[0]).slice(0, 3);
         const rest = p.restaurantes.slice(0, 3).map((r) => r.nombre);
-        return { texto: b.comer.replace("{d}", ctx.nombreDestino(destino)).replace("{p}", lista(platos)).replace("{r}", lista(rest)),
-                 accion: { texto: ctx.t("nav_comer"), fn: () => ctx.ir("#comida", destino) } };
+        return { texto: b.comer.replace("{d}", ctx.nombreDestino(d)).replace("{p}", lista(platos)).replace("{r}", lista(rest)),
+                 accion: { texto: ctx.t("nav_comer"), fn: () => ctx.ir("#comida", d) } };
       }
-      if (quiere.hacer && destino && !fecha) {
-        const p = await plan(destino, proximaFecha());
+      if (id === "hacer" || (!seguro && quiere.hacer && destino && !fecha)) {
+        const d = destino || ctx.destinoActual();
+        const p = await plan(d, proximaFecha());
         const nombres = p.lugares.filter((l) => !l.aviso_sargazo).slice(0, 4).map((l) => ctx.nombreLugar(l));
-        return { texto: b.hacer.replace("{d}", ctx.nombreDestino(destino)).replace("{l}", lista(nombres)),
-                 accion: { texto: ctx.t("nav_hacer"), fn: () => ctx.ir("#lugares", destino) } };
+        return { texto: b.hacer.replace("{d}", ctx.nombreDestino(d)).replace("{l}", lista(nombres)),
+                 accion: { texto: ctx.t("nav_hacer"), fn: () => ctx.ir("#lugares", d) } };
       }
-      if (destino && (fecha || quiere.estado)) {
+      if (id === "mejor_epoca" || (!seguro && quiere.mejor && destino)) {
+        const d = destino || ctx.destinoActual();
+        const p = await plan(d, proximaFecha());
+        const meses = p.mejores_meses.map((m) => `${ctx.mes(m.periodo)} ${m.anio}`);
+        return { texto: b.mejor.replace("{d}", ctx.nombreDestino(d)).replace("{m}", lista(meses)),
+                 accion: { texto: ctx.t("nav_cuando"), fn: () => ctx.ir("#cuando", d) } };
+      }
+      if (id === "estado" || (!seguro && destino && (fecha || quiere.estado))) {
+        const d = destino || ctx.destinoActual();
         const f = fecha ? fecha.fecha : proximaFecha();
-        const p = await plan(destino, f);
+        const p = await plan(d, f);
         const [titulo, , frase] = ctx.nivel(p.prediccion.nivel);
         let x = frase;
         if (p.recomendacion) x += ` ${ctx.t("alt_titulo", { d: ctx.nombreDestino(p.recomendacion.destino_id) }).replace(/<[^>]+>/g, "")}`;
-        return { texto: b.estado.replace("{d}", ctx.nombreDestino(destino)).replace("{f}", ctx.fechaLarga(f)).replace("{n}", `<b>${titulo}</b>`).replace("{x}", esc(x)),
-                 accion: { texto: ctx.t("ver"), fn: () => ctx.planear(destino, f) } };
+        return { texto: b.estado.replace("{d}", ctx.nombreDestino(d)).replace("{f}", ctx.fechaLarga(f)).replace("{n}", `<b>${titulo}</b>`).replace("{x}", esc(x)),
+                 accion: { texto: ctx.t("ver"), fn: () => ctx.planear(d, f) } };
       }
-      if (quiere.mejor && destino) {
-        const p = await plan(destino, proximaFecha());
-        const meses = p.mejores_meses.map((m) => `${ctx.mes(m.periodo)} ${m.anio}`);
-        return { texto: b.mejor.replace("{d}", ctx.nombreDestino(destino)).replace("{m}", lista(meses)),
-                 accion: { texto: ctx.t("nav_cuando"), fn: () => ctx.ir("#cuando", destino) } };
+      if (seguro && M.respuestas[id]) {
+        const r = M.respuestas[id];
+        return { texto: esc(r[ctx.idioma()] || r.es) };
       }
-      const f = faq(t);
+      const f = seguro ? null : faq(t);
       if (f) return { texto: esc(f[1]) };
-      if (quiere.saludo) return { texto: esc(b.saludo) };
-      if (quiere.comer || quiere.hacer || quiere.mejor || quiere.estado || fecha) return { texto: esc(b.pide_destino) };
+      if (fecha) return { texto: esc(b.pide_destino) };
       return { texto: esc(b.no_entendi) };
     }
 
@@ -175,7 +227,7 @@
         p += norm(par[0]).split(" ").filter((w) => w.length > 4 && palabras.has(w)).length * 0.5;
         if (p > puntos) { puntos = p; mejor = par; }
       }
-      return puntos >= 1 ? mejor : null;
+      return puntos >= 2 ? mejor : null;
     }
 
     async function enviar(texto) {

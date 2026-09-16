@@ -148,7 +148,7 @@
       .sort((x, y) => Number(x.aviso_sargazo) - Number(y.aviso_sargazo));
     return {
       ...base, fecha: fechaIso, dia: contextoDia(f), lugares,
-      restaurantes: D.restaurantes[destino], probar: D.probar[destino],
+      restaurantes: D.restaurantes[destino], hoteles: D.hoteles[destino], probar: D.probar[destino],
       mejores_meses: D.tranquilos[destino].filter((x) => x.periodo >= siguiente).filter((x, i, a) => a.findIndex((y) => y.mes === x.mes) === i).slice(0, 3),
     };
   }
